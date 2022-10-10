@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FlightService } from './flight.service';
+import { FlightService } from '../../shared/services/flight.service';
 
 describe('FlightService', () => {
-  let service: FlightService;
+    let service: FlightService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [FlightService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [FlightService],
+        }).compile();
 
-    service = module.get<FlightService>(FlightService);
-  });
+        service = module.get<FlightService>(FlightService);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });

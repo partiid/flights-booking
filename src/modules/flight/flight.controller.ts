@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-import { FlightService } from './flight.service';
+import { FlightService } from '../../shared/services/flight.service';
 @Controller('flights')
 export class FlightController {
-  constructor(private readonly flightService: FlightService) {}
+    constructor(private readonly flightService: FlightService) {}
 
-  @Get('/all')
-  async getFlights() {
-    return await this.flightService.findMany();
-  }
+    @Get('/all')
+    async getFlights() {
+        return await this.flightService.findAll();
+    }
 }
