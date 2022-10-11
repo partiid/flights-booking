@@ -27,6 +27,7 @@
     "@nestjs/swagger": "^6.1.2",
     "@prisma/client": "^4.4.0",
     "reflect-metadata": "^0.1.13",
+    "regex-to-strings": "^2.1.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
   },
@@ -70,5 +71,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "npx ts-node prisma/seed.ts"
   }
+  
 }

@@ -1,9 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { Flight, Prisma } from '@prisma/client';
 import { ServiceInterface } from '../../interfaces/service.interface';
+
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
+    private readonly Logger: Logger = new Logger(FlightService.name);
+
     constructor(private prisma: PrismaService) {}
 
     async findAll() {
