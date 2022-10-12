@@ -7,7 +7,7 @@ import { ServiceInterface } from '../../interfaces/service.interface';
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
 
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async findAll() {
         return this.prisma.flight.findMany();

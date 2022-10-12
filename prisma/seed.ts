@@ -14,9 +14,19 @@ const seedAirports = async () => {
         await prisma.airport.create({
             data: {
                 name: airport.name,
-                country: { connect: { name: airport.country } },
+                country: {
+                    connectOrCreate: {
+                        where: { name: airport.country },
+                        create: {
+                            name: airport.country,
+                            code: '',
+                        }
+                    }
+                },
                 city: { connect: { name: airport.city } },
                 code: airport.iata_code,
+                geo_lat: airport._geoloc.lat,
+                geo_long: airport._geoloc.lng,
             },
         });
     }
@@ -42,22 +52,11 @@ const seedAirportCities = async () => {
     }
 };
 
-// const seedCities  = async () => {
+const seedFlights = async () => {
 
-// }
+}
 
-// const seedAirports = async () => {
-//     for(const  airport of airports){
 
-//         // await prisma.airport.create({
-//         //     name: airport.name,
-//         //     id_country: countryId,
-//         //     code: airport.iata_code,
-
-//         // })
-
-//     }
-// }
 main()
     .then(async () => {
         await prisma.$disconnect();

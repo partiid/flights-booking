@@ -11,73 +11,76 @@ datasource db {
 }
 
 model Flight {
-  id_flight         Int      @id @default(autoincrement()) @unique
-  number            String   @unique
-  airport_departure          Airport @relation(name: "departure",  fields: [id_departure], references: [id_airport])
-  airport_destination        Airport @relation(name: "destination", fields: [id_destination], references: [id_airport])
-  Aircraft Aircraft          @relation(fields: [id_aircraft], references: [id_aircraft])
-  id_aircraft Int
-  id_departure      Int      
-  id_destination    Int
-  date_departure    DateTime
-  date_arrival      DateTime
-  price             Float
-  bookings          Booking[]
+  id_flight           Int       @id @unique @default(autoincrement())
+  number              String    @unique
+  airport_departure   Airport   @relation(name: "departure", fields: [id_departure], references: [id_airport])
+  airport_destination Airport   @relation(name: "destination", fields: [id_destination], references: [id_airport])
+  Aircraft            Aircraft  @relation(fields: [id_aircraft], references: [id_aircraft])
+  id_aircraft         Int
+  id_departure        Int
+  id_destination      Int
+  date_departure      DateTime
+  date_arrival        DateTime
+  price               Float
+  bookings            Booking[]
 }
 
 model Airport {
-  id_airport Int @id @default(autoincrement()) @unique
-  country Country @relation(fields: [id_country], references: [id_country])
-  city City @relation(fields: [id_city], references: [id_city])
-  id_country Int
-  id_city    Int 
-  name      String 
-  code      String
-  Flights_departure    Flight[] @relation(name: "departure")
-  Flights_arrival  Flight[] @relation(name: "destination")
-  
+  id_airport        Int      @id @unique @default(autoincrement())
+  country           Country  @relation(fields: [id_country], references: [id_country])
+  city              City     @relation(fields: [id_city], references: [id_city])
+  id_country        Int
+  id_city           Int
+  name              String
+  code              String
+  geo_lat           Float
+  geo_long          Float
+  Flights_departure Flight[] @relation(name: "departure")
+  Flights_arrival   Flight[] @relation(name: "destination")
 }
+
 model Aircraft {
-  id_aircraft Int @id @default(autoincrement()) @unique
-  model String
+  id_aircraft  Int      @id @unique @default(autoincrement())
+  model        String
   registration String
   manufacturer String
-  Flights Flight[]
+  Flights      Flight[]
 }
+
 model Country {
-  id_country Int @id @default(autoincrement()) 
+  id_country Int       @id @default(autoincrement())
   code       String?
-  name       String @unique
-  Airports    Airport[]
-  Cities      City[]
+  name       String    @unique
+  Airports   Airport[]
+  Cities     City[]
 
   @@unique([id_country, name])
 }
+
 model City {
-  id_city    Int @id @default(autoincrement()) @unique
-  country Country @relation(fields: [id_country], references: [id_country])
+  id_city    Int       @id @unique @default(autoincrement())
+  country    Country   @relation(fields: [id_country], references: [id_country])
   id_country Int
-  name       String @unique
+  name       String    @unique
   Airports   Airport[]
-  
 }
 
 model Booking {
-  id_booking Int @id @default(autoincrement())
-  customer Customer @relation(fields: [id_customer], references: [id_customer])
-  flight Flight @relation(fields: [id_flight], references: [id_flight])
-  date_booking DateTime
-  id_customer Int 
-  id_flight Int
+  id_booking       Int      @id @default(autoincrement())
+  customer         Customer @relation(fields: [id_customer], references: [id_customer])
+  flight           Flight   @relation(fields: [id_flight], references: [id_flight])
+  date_booking     DateTime
+  id_customer      Int
+  id_flight        Int
   number_of_people Int
-  seats String
-  price Float
+  seats            String
+  price            Float
 }
+
 model Customer {
-  id_customer Int @id @default(autoincrement())
-  name String
-  lastname String
+  id_customer           Int       @id @default(autoincrement())
+  name                  String
+  lastname              String
   identification_number String
-  Bookings Booking[]
-  
+  Bookings              Booking[]
 }
