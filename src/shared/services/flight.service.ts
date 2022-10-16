@@ -13,6 +13,12 @@ export class FlightService implements ServiceInterface<Flight> {
         return this.prisma.flight.findMany();
     }
 
+    async findMany(where: Prisma.FlightWhereInput): Promise<Flight[]> {
+        return this.prisma.flight.findMany({
+            where: where,
+        });
+    }
+
     async findOne(
         flightWhereUniqueInput: Prisma.FlightWhereUniqueInput,
     ): Promise<Flight | null> {

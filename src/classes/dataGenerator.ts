@@ -10,4 +10,19 @@ export class DataGenerator {
             return flightNumber;
         }
     }
+
+    genRandomDate(): Date {
+        let timestamp = this.genRandomDateTimestamp();
+        return new Date(timestamp);
+    }
+
+    genRandomDateTimestamp(): number {
+        var startDate = new Date(2021, 0, 1).getTime();
+        var endDate = new Date(2022, 0, 1).getTime();
+        var spaces = (endDate - startDate);
+        var timestamp = Math.round(Math.random() * spaces);
+        timestamp += startDate;
+        return timestamp;
+    }
+
 }

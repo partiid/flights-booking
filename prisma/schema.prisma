@@ -15,8 +15,8 @@ model Flight {
   number              String    @unique
   airport_departure   Airport   @relation(name: "departure", fields: [id_departure], references: [id_airport])
   airport_destination Airport   @relation(name: "destination", fields: [id_destination], references: [id_airport])
-  Aircraft            Aircraft  @relation(fields: [id_aircraft], references: [id_aircraft])
-  id_aircraft         Int
+  Aircraft            Aircraft? @relation(fields: [id_aircraft], references: [id_aircraft])
+  id_aircraft         Int?
   id_departure        Int
   id_destination      Int
   date_departure      DateTime

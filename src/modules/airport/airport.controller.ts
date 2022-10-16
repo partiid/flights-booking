@@ -13,14 +13,15 @@ export class AirportController {
     async getAirports() {
         return await this.airportService.findAll();
     }
-    @Get('/:id')
-    async getAirportById(@Param('id', ParseIntPipe) id_airport: number) {
+    @Get('/:id_airport')
+    async getAirportById(@Param('id_airport', ParseIntPipe) id_airport: number) {
         return await this.airportService.findOne({ id_airport: id_airport });
     }
-    @Get('/country/:id')
-    async getAirportsByCountry(@Param('id', ParseIntPipe) id_country: number) {
+    @Get('/country/:id_country')
+    async getAirportsByCountry(@Param('id_country', ParseIntPipe) id_country: number) {
         return await this.airportService.findMany({ id_country: id_country });
     }
+
 
 
 
