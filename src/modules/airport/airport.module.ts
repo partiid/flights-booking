@@ -5,6 +5,8 @@ import { PrismaService } from 'src/prisma.service';
 
 @Module({
   controllers: [AirportController],
-  providers: [AirportService, PrismaService]
+  providers: [AirportService, PrismaService],
+  exports: [AirportService]
+
 })
 export class AirportModule { }

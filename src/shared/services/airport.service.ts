@@ -15,28 +15,20 @@ export class AirportService implements ServiceInterface<Airport>{
     async findAll(): Promise<Airport[]> {
         return this.prisma.airport.findMany(
             {
-                include: {
+                // include: {
+                //     city: true,
+                //     country: true
+                // },
 
-                    city: {
-                        include: {
-                            country: {
-                                select: {
-                                    name: true
-                                }
-                            }
-                        },
-
-                    }
-                },
-
-                take: 10
 
             }
         );
     }
     async findOne(airportWhereUniqueInput: { id_airport: number; }): Promise<Airport | null> {
+
         return this.prisma.airport.findUnique({
             where: airportWhereUniqueInput,
+            include: { country: true, city: true }
         });
     }
 
@@ -72,7 +64,9 @@ export class AirportService implements ServiceInterface<Airport>{
         throw new Error("Method not Available.");
     }
 
-
+    test() {
+        return true;
+    }
 
 
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ServiceInterface } from 'src/interfaces/service.interface';
 import { Country } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
@@ -6,8 +6,11 @@ import { FlightService } from './flight.service';
 import { Flight } from '@prisma/client';
 @Injectable()
 export class CountryService implements ServiceInterface<Country> {
+
     constructor(readonly prisma: PrismaService,
-        readonly flightsService: FlightService) { }
+        private readonly flightsService: FlightService) {
+
+    }
     async findAll(): Promise<Country[]> {
         return this.prisma.country.findMany();
     }
