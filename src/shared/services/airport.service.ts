@@ -1,16 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { ServiceInterface } from 'src/interfaces/service.interface';
 import { Airport, Prisma } from "@prisma/client";
 import { PrismaService } from 'src/prisma.service';
-
-
+import { Graph } from 'src/classes/Graph';
+import { flightRoute } from 'src/interfaces/flight/flightRoute.interface';
+import { FlightService } from './flight.service';
 
 
 @Injectable()
 export class AirportService implements ServiceInterface<Airport>{
     private readonly Logger = new Logger(AirportService.name);
 
-    constructor(readonly prisma: PrismaService) { }
+    constructor(readonly prisma: PrismaService,
+        @Inject(forwardRef(() => FlightService)) readonly flightService: FlightService) { }
 
     async findAll(): Promise<Airport[]> {
         return this.prisma.airport.findMany(
@@ -68,5 +70,18 @@ export class AirportService implements ServiceInterface<Airport>{
         return true;
     }
 
+    async createAirportsGraph(): Promise<Graph> {
+        let airports: Airport[] = await this.findAll();
+        let graph = new Graph();
+        airports.forEach(airport => {
+            graph.addNode(airport.id_airport);
+        })
+        let flightRoutes: flightRoute[] = await this.flightService.getFlightsRoutes();
+        flightRoutes.forEach((route: flightRoute) => {
+            graph.addEdge(route.departure.id, route.destination.id);
+        });
+
+        return graph;
+    }
 
 }

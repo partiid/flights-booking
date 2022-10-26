@@ -1,21 +1,28 @@
 export class Graph {
     adjecencyList: Map<number, number[]>;
     searchResult: number[];
+
+
+
     constructor() {
         this.adjecencyList = new Map();
         this.searchResult = [];
+
+
     }
-    addNode(airport: number) {
+
+
+    public addNode(airport: number) {
         this.adjecencyList.set(airport, []);
     }
 
-    addEdge(departure: number, destination: number) {
+    public addEdge(departure: number, destination: number) {
 
         this.adjecencyList.get(departure).push(destination);
         this.adjecencyList.get(destination).push(departure);
     }
 
-    bfs(start: number) {
+    public bfs(start: number) {
         let queue: number[] = [];
         let result: number[] = [];
         let visited: Map<number, boolean> = new Map();
@@ -37,29 +44,31 @@ export class Graph {
 
         return result;
     }
-    dfs(start: number, visited = new Set()) {
+    public dfs(start: number, desired_destination: number, visited = new Set()): number[] {
         console.log("start: ", start);
         this.searchResult.push(start);
 
         visited.add(start);
         const destinations = this.adjecencyList.get(start);
         for (let destination of destinations) {
-            if (destination === 1446) {
+            if (destination === desired_destination) {
                 return;
             }
             if (!visited.has(destination)) {
-                this.dfs(destination, visited);
+                this.dfs(destination, desired_destination, visited);
             }
         }
 
 
     }
-    getSearchResult() {
+    public getSearchResult() {
         return this.searchResult;
     }
 
-
-    getAdjecencyList() {
+    public clearSearchResult() {
+        this.searchResult = [];
+    }
+    public getAdjecencyList() {
         return this.adjecencyList;
     }
 

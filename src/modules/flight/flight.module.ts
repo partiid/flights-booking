@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { FlightController } from './flight.controller';
 import { FlightService } from '../../shared/services/flight.service';
@@ -10,6 +10,6 @@ import { AirportModule } from '../airport/airport.module';
     controllers: [FlightController],
     providers: [FlightService, PrismaService],
     exports: [FlightService],
-    imports: [AirportModule],
+    imports: [forwardRef(() => AirportModule)],
 })
 export class FlightModule { }

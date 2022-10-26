@@ -16,11 +16,11 @@ export class FlightController {
     async getFlights() {
         return await this.flightService.findAll();
     }
-    @Get('/test')
-    async test() {
+    @Get('/test/:id_departure/:id_destination')
+    async test(@Param('id_departure', ParseIntPipe) id_departure: number, @Param('id_destination', ParseIntPipe) id_destination: number) {
 
         // console.log(await this.flightService.findConnectedFlights());
-        return await this.flightService.findConnectedFlights();
+        return await this.flightService.findConnectedFlights(id_departure, id_destination);
     }
 
     @Get('/flight/:id_flight')

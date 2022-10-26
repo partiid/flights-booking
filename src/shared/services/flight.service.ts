@@ -1,16 +1,18 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { Airport, Flight, Prisma } from '@prisma/client';
 import { ServiceInterface } from '../../interfaces/service.interface';
 import { flightRoute } from '../../interfaces/flight/flightRoute.interface';
 import { AirportService } from './airport.service';
 import { Graph } from 'src/classes/Graph';
+import * as _ from 'lodash';
+import { connected } from 'process';
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
 
     constructor(
-        private readonly airportService: AirportService,
+        @Inject(forwardRef(() => AirportService)) private readonly airportService: AirportService,
         private readonly prisma: PrismaService,
     ) { }
 
@@ -82,27 +84,69 @@ export class FlightService implements ServiceInterface<Flight> {
 
         return flightRoutes;
     }
-    async findConnectedFlights(): Promise<Object> {
-        //get all flight routes and airports 
-        // this.airportService.test();
-        let airports: Airport[] = await this.airportService.findAll();
-        //create graph from airports as nodes and edges as flight routes 
-        let graph = new Graph();
+    //get direct flights from one airport to the other one 
+    async getDirectFlight(id_departure: number, id_destination: number): Promise<Flight[]> {
+        return await this.prisma.flight.findMany({
+            where: {
+                id_departure,
+                id_destination,
+            }
+        });
+    }
+    //find flights from to 
+    //if direct flight is not found, find connected ones 
+    async findConnectedFlights(id_departure: number, id_destination: number) {
+        const graph: Graph = await this.airportService.createAirportsGraph();
 
-        airports.forEach(airport => {
+        //first check if direct flight is available
+        let directFlight: Flight[] = await this.getDirectFlight(id_departure, id_destination);
 
-            graph.addNode(airport.id_airport);
-        })
-        let flightRoutes: flightRoute[] = await this.getFlightsRoutes();
+        if (_.isEmpty(directFlight) === false) {
+            return directFlight;
+        }
 
-        flightRoutes.forEach((route: flightRoute) => {
-            graph.addEdge(route.departure.id, route.destination.id);
+        //if direct flight is not available, find links between the airports 
+        let connectedFlight: Flight[] = [];
+        //search the graph
+        graph.dfs(id_departure, id_destination);
+
+        let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
+            return id !== id_departure;
         });
 
-        //search graph for connected airports 
-        graph.dfs(3009);
+        if (_.isEmpty(connectedAirports) === true) {
+            return [];
+        }
+        console.log("Connected airports to ", id_departure, ":", connectedAirports);
+        let departures: Flight[] = [];
+        let departureNotFound: boolean = false;
+        //search for flights between the airports untill it finds a direct flight from last departure airport
+        while (_.isEmpty(await this.getDirectFlight(id_departure, id_destination)) === true && departureNotFound == false) {
+            console.log(id_departure, ":", connectedAirports);
+            if (_.isEmpty(connectedAirports) == false) {
+                for (let node of connectedAirports) {
+                    let departure = await this.getDirectFlight(id_departure, node);
 
-        //check whether connection between airports is like departure -> destination (departure) 
+
+                    graph.clearSearchResult();
+                    graph.dfs(node, id_destination);
+                    id_departure = node; //set new departure airport
+                    connectedAirports = graph.getSearchResult();
+
+                }
+            } else {
+                return;
+            }
+
+        }
+
+        //get the last found flight
+        let lastFlight = await this.getDirectFlight(id_departure, id_destination);
+
+        console.log(connectedFlight);
+
+
+        //return connectedFlights;
 
 
 
