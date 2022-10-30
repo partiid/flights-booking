@@ -1,16 +1,17 @@
+import * as _ from 'lodash';
 export class Graph {
     adjecencyList: Map<number, number[]>;
     searchResult: number[];
-
+    paths: number[][];
 
 
     constructor() {
         this.adjecencyList = new Map();
         this.searchResult = [];
+        this.paths = [];
 
 
     }
-
 
     public addNode(airport: number) {
         this.adjecencyList.set(airport, []);
@@ -58,7 +59,59 @@ export class Graph {
                 this.dfs(destination, desired_destination, visited);
             }
         }
+    }
 
+    //write a function to get a vertices count 
+    public getNodeCount(): number {
+        return this.adjecencyList.size;
+
+    }
+
+    public findPaths(departure: number, destination: number) {
+        const nodeCount: number = this.getNodeCount();
+
+        let isVisited: Array<boolean> = new Array(nodeCount);
+        let result = [];
+        for (let i = 0; i < nodeCount; i++) {
+            isVisited[i] = false;
+
+            let pathList: Array<number> = [];
+
+            pathList.push(departure);
+
+            this.printAllPathsUntil(departure, destination, isVisited, pathList, result);
+
+        }
+
+
+    }
+    public getPaths() {
+        return _.uniqWith(this.paths, _.isEqual);
+    }
+
+    public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]): void {
+
+        if (departure == (destination)) {
+            //console.log(localPathList);
+            result = result.concat(localPathList);
+            this.paths.push(result);
+            return;
+        }
+
+        isVisited[departure] = true;
+
+        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
+
+                localPathList.push(this.adjecencyList.get(departure)[i]);
+
+                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
+
+                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
+            }
+        }
+        isVisited[departure] = false;
 
     }
     public getSearchResult() {

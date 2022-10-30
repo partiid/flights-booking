@@ -16,8 +16,8 @@ export class FlightController {
     async getFlights() {
         return await this.flightService.findAll();
     }
-    @Get('/test/:id_departure/:id_destination')
-    async test(@Param('id_departure', ParseIntPipe) id_departure: number, @Param('id_destination', ParseIntPipe) id_destination: number) {
+    @Get('/from/:id_departure/to/:id_destination')
+    async getFlightsFromTo(@Param('id_departure', ParseIntPipe) id_departure: number, @Param('id_destination', ParseIntPipe) id_destination: number) {
 
         // console.log(await this.flightService.findConnectedFlights());
         return await this.flightService.findConnectedFlights(id_departure, id_destination);
@@ -40,11 +40,11 @@ export class FlightController {
         return await this.flightService.findMany({ id_destination: id });
     }
 
-    @Get('/from/:id_airport_from/to/:id_airport_to')
-    async getFlightsFromTo(@Param('id_airport_from', ParseIntPipe) from: number, @Param('id_airport_to', ParseIntPipe) to: number) {
+    // @Get('/from/:id_airport_from/to/:id_airport_to')
+    // async getFlightsFromTo(@Param('id_airport_from', ParseIntPipe) from: number, @Param('id_airport_to', ParseIntPipe) to: number) {
 
-        return await this.flightService.findMany({ id_departure: from, id_destination: to });
-    }
+    //     return await this.flightService.findMany({ id_departure: from, id_destination: to });
+    // }
 
 
 

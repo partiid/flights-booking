@@ -6,7 +6,10 @@ import { flightRoute } from '../../interfaces/flight/flightRoute.interface';
 import { AirportService } from './airport.service';
 import { Graph } from 'src/classes/Graph';
 import * as _ from 'lodash';
+import 'lodash.combinations';
 import { connected } from 'process';
+import { connect } from 'http2';
+import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
@@ -106,7 +109,7 @@ export class FlightService implements ServiceInterface<Flight> {
         }
 
         //if direct flight is not available, find links between the airports 
-        let connectedFlight: Flight[] = [];
+        let connectedFlight: Array<Flight[]> = [];
         //search the graph
         graph.dfs(id_departure, id_destination);
 
@@ -117,40 +120,63 @@ export class FlightService implements ServiceInterface<Flight> {
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
-        console.log("Connected airports to ", id_departure, ":", connectedAirports);
-        let departures: Flight[] = [];
-        let departureNotFound: boolean = false;
-        //search for flights between the airports untill it finds a direct flight from last departure airport
-        while (_.isEmpty(await this.getDirectFlight(id_departure, id_destination)) === true && departureNotFound == false) {
-            console.log(id_departure, ":", connectedAirports);
-            if (_.isEmpty(connectedAirports) == false) {
-                for (let node of connectedAirports) {
-                    let departure = await this.getDirectFlight(id_departure, node);
+        //find all flights that connect both airports 
+        graph.findPaths(id_departure, id_destination);
+        let possiblePaths: number[][] = graph.getPaths();
+        let possibleFlights: Array<Array<Flight[]>> = [];
 
+        //assign possbile flights for every step of the path 
+        for (let path of possiblePaths) {
+            let flight: Array<Flight[]> = [];
+            for (let i = 0; i < path.length - 1; i++) {
+                let flights: Flight[] = await this.getDirectFlight(path[i], path[i + 1]);
+                //when there's more than one flight found, create separate array for each flight 
+                // if (flights.length > 1) {
+                //     for (let j = 0; j < flights.length - 1; j++) {
+                //         flights.concat(await this.getDirectFlight(flights[j].id_destination, path[i]));
+                //     }
+                // }
 
-                    graph.clearSearchResult();
-                    graph.dfs(node, id_destination);
-                    id_departure = node; //set new departure airport
-                    connectedAirports = graph.getSearchResult();
+                flight.push(flights)
 
-                }
-            } else {
-                return;
             }
+            //when there's more flights on given route, create sepearate options 
+            console.log(flight);
 
+            possibleFlights.push(flight);
+            //console.log(flights);
         }
 
-        //get the last found flight
-        let lastFlight = await this.getDirectFlight(id_departure, id_destination);
 
-        console.log(connectedFlight);
+        let combinationFlightIds = possibleFlights.map((route) => {
+            let routeFlightIds: number[] = [];
+            route.forEach(flights => {
+                let flightIds = flights.map(f => f.id_flight);
+                routeFlightIds.push(...flightIds);
+            });
+
+            let combinations = _.combinations(routeFlightIds, route.length);
+
+            return combinations;
+        });
+
+
+        return possibleFlights;
+
+
+
+
+        //get the last found flight
+        //let lastFlight = await this.getDirectFlight(id_departure, id_destination);
+
+        //console.log(connectedFlight);
 
 
         //return connectedFlights;
 
 
 
-        return graph.getSearchResult();
+        //return graph.getSearchResult();
 
     }
 
