@@ -39,6 +39,11 @@ export class FlightController {
     async getFlightsToAirport(@Param('id_airport', ParseIntPipe) id: number) {
         return await this.flightService.findMany({ id_destination: id });
     }
+    //get empty seats for given flight 
+    @Get('/flight/seats/:id_flight')
+    async getFlightSeats(@Param('id_flight', ParseIntPipe) id_flight: number) {
+        return await this.flightService.getFlightSeats(id_flight);
+    }
 
     // @Get('/from/:id_airport_from/to/:id_airport_to')
     // async getFlightsFromTo(@Param('id_airport_from', ParseIntPipe) from: number, @Param('id_airport_to', ParseIntPipe) to: number) {

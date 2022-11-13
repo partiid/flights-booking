@@ -140,43 +140,32 @@ export class FlightService implements ServiceInterface<Flight> {
                 flight.push(flights)
 
             }
-            //when there's more flights on given route, create sepearate options 
-            console.log(flight);
 
             possibleFlights.push(flight);
             //console.log(flights);
         }
 
-
-        let combinationFlightIds = possibleFlights.map((route) => {
-            let routeFlightIds: number[] = [];
-            route.forEach(flights => {
-                let flightIds = flights.map(f => f.id_flight);
-                routeFlightIds.push(...flightIds);
-            });
-
-            let combinations = _.combinations(routeFlightIds, route.length);
-
-            return combinations;
-        });
-
-
         return possibleFlights;
 
+        // let combinationFlightIds = possibleFlights.map((route) => {
+        //     let routeFlightIds: number[] = [];
+        //     route.forEach(flights => {
+        //         let flightIds = flights.map(f => f.id_flight);
+        //         routeFlightIds.push(...flightIds);
+        //     });
+
+        //     let combinations = _.combinations(routeFlightIds, route.length);
+
+        //     return combinations;
+        // });
 
 
 
-        //get the last found flight
-        //let lastFlight = await this.getDirectFlight(id_departure, id_destination);
+    }
 
-        //console.log(connectedFlight);
+    async getFlightSeats(id_flight: number) {
+        const flight: Flight = await this.findOne({ id_flight: id_flight });
 
-
-        //return connectedFlights;
-
-
-
-        //return graph.getSearchResult();
 
     }
 

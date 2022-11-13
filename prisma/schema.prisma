@@ -79,8 +79,9 @@ model Booking {
 
 model Customer {
   id_customer           Int       @id @default(autoincrement())
+  email                 String
   name                  String
   lastname              String
-  identification_number String
+  identification_number String    @unique(map: "identification_number")
   Bookings              Booking[]
 }

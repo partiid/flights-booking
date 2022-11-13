@@ -93,6 +93,7 @@ export class Graph {
 
         if (departure == (destination)) {
             //console.log(localPathList);
+            
             result = result.concat(localPathList);
             this.paths.push(result);
             return;
