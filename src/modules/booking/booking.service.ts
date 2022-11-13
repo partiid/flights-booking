@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerService } from 'src/shared/services/customer.service';
 import { PrismaService } from 'src/prisma.service';
 import { ServiceInterface } from 'src/interfaces/service.interface';
 import { Booking } from '@prisma/client';
+import { BookingModel } from './booking.model';
 import { Prisma } from '@prisma/client';
 @Injectable()
 export class BookingService implements ServiceInterface<Booking>{
@@ -22,12 +23,19 @@ export class BookingService implements ServiceInterface<Booking>{
             where,
         });
     }
-    async create(data: Prisma.BookingCreateInput): Promise<Booking> {
+    async create(data: BookingModel): Promise<Booking> {
 
-        return this.prismaService.booking.create({
-            data,
-        });
     }
+
+    async createFromModel(data: BookingModel): Promise<Booking> {
+        const customer = await this.customerService.findOne({ id_customer: data.id_customer });
+
+        if (customer === null || Object.keys(customer).length === 0) {
+            throw new BadRequestException("Customer does not exist, create the customer first");
+        }
+
+    }
+
     async update(params: {
         where: Prisma.BookingWhereUniqueInput;
         data: Prisma.BookingUpdateInput;
@@ -43,6 +51,7 @@ export class BookingService implements ServiceInterface<Booking>{
             where,
         });
     }
+
 
 
 

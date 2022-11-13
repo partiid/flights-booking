@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, HttpCode, Injectable } from '@nestjs/common';
 import { ServiceInterface } from 'src/interfaces/service.interface';
 import { Customer, Prisma, PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
@@ -26,6 +26,7 @@ export class CustomerService implements ServiceInterface<Customer> {
             data,
         });
     }
+
     async createIfNotExists(data: Prisma.CustomerCreateInput): Promise<Customer | Error> {
         const customer: Customer = await this.prismaService.customer.findFirst({
             where: {
@@ -35,7 +36,7 @@ export class CustomerService implements ServiceInterface<Customer> {
         if (customer === null || Object.keys(customer).length === 0) {
             return this.create(data);
         }
-        return new Error("Customer already exists, update instead");
+        throw new ConflictException("Customer already exists, update instead");
 
     }
     async update(params: {

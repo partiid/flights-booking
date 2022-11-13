@@ -6,7 +6,6 @@ export class CustomerModel {
 
     id_customer: number;
 
-
     @IsString()
     @IsNotEmpty()
     @IsEmail()
