@@ -24,17 +24,17 @@ export class BookingService implements ServiceInterface<Booking>{
         });
     }
     async create(data: BookingModel): Promise<Booking> {
-
+        return null; 
     }
 
-    async createFromModel(data: BookingModel): Promise<Booking> {
-        const customer = await this.customerService.findOne({ id_customer: data.id_customer });
+    // async createFromModel(data: BookingModel): Promise<Booking> {
+    //     const customer = await this.customerService.findOne({ id_customer: data.id_customer });
 
-        if (customer === null || Object.keys(customer).length === 0) {
-            throw new BadRequestException("Customer does not exist, create the customer first");
-        }
+    //     if (customer === null || Object.keys(customer).length === 0) {
+    //         throw new BadRequestException("Customer does not exist, create the customer first");
+    //     }
 
-    }
+    // }
 
     async update(params: {
         where: Prisma.BookingWhereUniqueInput;
