@@ -106,7 +106,7 @@ const seedAircrafts = async () => {
                 model,
                 manufacturer,
                 registration: generator.genAircraftRegistration(),
-                capacity: Math.floor(Math.random() * (128 - 1) + 1),
+                capacity: Math.floor(Math.random() * (128 - 30) + 30),
             },
         });
     }

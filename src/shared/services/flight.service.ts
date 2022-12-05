@@ -5,6 +5,8 @@ import { ServiceInterface } from '../../interfaces/service.interface';
 import { flightRoute } from '../../interfaces/flight/flightRoute.interface';
 import { AirportService } from './airport.service';
 import { Graph } from 'src/classes/Graph';
+import { Booking } from '@prisma/client';
+import { Aircraft } from '@prisma/client';
 import * as _ from 'lodash';
 import 'lodash.combinations';
 import { connected } from 'process';
@@ -163,8 +165,17 @@ export class FlightService implements ServiceInterface<Flight> {
 
     }
 
-    async getFlightSeats(id_flight: number) {
+    async getFlightSeats(id_flight: number): Promise<number> {
+        const bookings: Booking[] = await this.prisma.booking.findMany({ where: { id_flight: id_flight } })
         const flight: Flight = await this.findOne({ id_flight: id_flight });
+        const aircraft: Aircraft = await this.prisma.aircraft.findUnique({ where: { id_aircraft: flight.id_aircraft } });
+
+        let seats: number = 0;
+        for (let booking of bookings) {
+            seats += parseInt(booking.seats);
+        }
+        let seatsLeft = aircraft.capacity - seats;
+        return seatsLeft;
 
 
     }
