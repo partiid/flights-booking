@@ -10,6 +10,7 @@ async function main() {
     await seedAirportCities();
     await seedAirports();
     await seedFlights();
+    await seedAircrafts();
 }
 
 const seedAirports = async () => {
@@ -95,6 +96,23 @@ const seedFlights = async () => {
 
 
 }
+const seedAircrafts = async () => {
+    const generator = new DataGenerator();
+    const numOfAircrafts = 100;
+    for (let i = 0; i < numOfAircrafts; i++) {
+        const { model, manufacturer } = generator.genAircraftNameAndManufacturer();
+        await prisma.aircraft.create({
+            data: {
+                model,
+                manufacturer,
+                registration: generator.genAircraftRegistration(),
+                capacity: Math.floor(Math.random() * (128 - 1) + 1),
+            },
+        });
+    }
+}
+
+
 
 
 main()

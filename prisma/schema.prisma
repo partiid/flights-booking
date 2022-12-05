@@ -44,6 +44,7 @@ model Aircraft {
   model        String
   registration String
   manufacturer String
+  capacity     Int
   Flights      Flight[]
 }
 
