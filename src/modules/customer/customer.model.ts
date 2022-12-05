@@ -9,6 +9,7 @@ export class CustomerModel {
     @IsString()
     @IsNotEmpty()
     @IsEmail()
+    @ApiProperty()
     email: string;
 
     @ApiProperty()

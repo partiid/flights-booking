@@ -3,12 +3,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { isNumberObject } from 'util/types';
 export class BookingModel {
 
-    @IsInt()
     @ApiProperty()
+    @IsInt()
     id_customer: number;
 
-    @IsInt()
     @ApiProperty()
+    @IsInt()
     id_flight: number;
 
     @ApiProperty()
@@ -16,7 +16,7 @@ export class BookingModel {
     number_of_people: number;
 
     @ApiProperty()
-    seats?: number[][];
+    seats?: Array<number[]>;
 
     @ApiProperty()
     price: number;

@@ -15,9 +15,13 @@ export class ApiResponseInterceptor implements NestInterceptor {
         return next.handle().pipe(
             map((data) => ({
                 status: statusCode,
-                data: data,
+                data: this.isDataArray(data) ? data : [data],
                 errors: null,
             })),
         );
+    }
+
+    isDataArray(data: any) {
+        return Array.isArray(data);
     }
 }

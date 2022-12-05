@@ -1,4 +1,4 @@
-import { Controller, HttpCode, Post, HttpStatus } from '@nestjs/common';
+import { Controller, HttpCode, Post, HttpStatus, Body } from '@nestjs/common';
 import { BookingModel } from './booking.model';
 import { BookingService } from './booking.service';
 import { Booking } from '@prisma/client';
@@ -8,7 +8,7 @@ export class BookingController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(booking: BookingModel): Promise<Booking | Error> {
+  async create(@Body() booking: BookingModel): Promise<Booking | Error> {
 
     throw new Error("Not implemented yet");
     //return this.bookingService.createFromModel(booking);

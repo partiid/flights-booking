@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpException, HttpStatus, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post, UseFilters } from '@nestjs/common';
 import { CustomerService } from '../../shared/services/customer.service';
 import { Customer, Prisma } from '@prisma/client';
 import { CustomerModel } from './customer.model';
@@ -14,6 +14,6 @@ export class CustomerController {
 
     return this.customerService.createIfNotExists(customer);
   }
-
+  
 
 }
