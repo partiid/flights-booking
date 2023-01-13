@@ -6,12 +6,13 @@ import { flightRoute } from '../../interfaces/flight/flightRoute.interface';
 import { AirportService } from './airport.service';
 import { Graph } from 'src/classes/Graph';
 import { Booking } from '@prisma/client';
+import { BookingService } from 'src/modules/booking/booking.service';
 import { Aircraft } from '@prisma/client';
 import * as _ from 'lodash';
 import 'lodash.combinations';
-import { connected } from 'process';
-import { connect } from 'http2';
+
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
+import { AircraftSeating } from 'src/classes/AircraftSeating';
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
@@ -19,6 +20,7 @@ export class FlightService implements ServiceInterface<Flight> {
     constructor(
         @Inject(forwardRef(() => AirportService)) private readonly airportService: AirportService,
         private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => BookingService)) private readonly bookingService: BookingService,
     ) { }
 
     async findAll() {
@@ -166,16 +168,44 @@ export class FlightService implements ServiceInterface<Flight> {
     }
 
     async getFlightSeats(id_flight: number): Promise<number> {
-        const bookings: Booking[] = await this.prisma.booking.findMany({ where: { id_flight: id_flight } })
+        //const bookings: Booking[] = await this.prisma.booking.findMany({ where: { id_flight: id_flight } })
         const flight: Flight = await this.findOne({ id_flight: id_flight });
         const aircraft: Aircraft = await this.prisma.aircraft.findUnique({ where: { id_aircraft: flight.id_aircraft } });
 
-        let seats: number = 0;
-        for (let booking of bookings) {
-            seats += parseInt(booking.seats);
+        let capacity = aircraft.capacity;
+
+        return capacity;
+
+    }
+
+
+    async getFlightFreeSeats(id_flight: number): Promise<string[][] | Error> {
+        //const bookings: Booking[] = await this.prisma.booking.findMany({ where: { id_flight: id_flight } })
+        const flight: Flight = await this.findOne({ id_flight: id_flight });
+        const aircraft: Aircraft = await this.prisma.aircraft.findUnique({ where: { id_aircraft: flight.id_aircraft } });
+
+
+        if (!aircraft) {
+            return new Error("no aircraft for this flight found, error");
         }
-        let seatsLeft = aircraft.capacity - seats;
-        return seatsLeft;
+
+
+        //seats taken for this flight 
+        const seatsOccupied: string[] = _.split(await this.bookingService.getBookingSeats(id_flight), ",");
+
+        let freeSeats = AircraftSeating.occupiedSeats(await this.getFlightSeats(id_flight), seatsOccupied);
+
+
+        return freeSeats;
+
+
+
+        //get seats for this aircraft 
+
+        // const freeSeats =
+
+        //const seatTable = AircraftSeating.getSeatsTable(flightSeats);
+
 
 
     }

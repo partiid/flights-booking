@@ -10,8 +10,9 @@ export class BookingController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() booking: BookingModel): Promise<Booking | Error> {
 
-    throw new Error("Not implemented yet");
-    //return this.bookingService.createFromModel(booking);
+    //throw new Error("Not implemented yet");
+
+    return this.bookingService.createFromModel(booking);
   }
 
 

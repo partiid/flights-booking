@@ -42,7 +42,7 @@ export class FlightController {
     //get empty seats for given flight 
     @Get('/flight/seats/:id_flight')
     async getFlightSeats(@Param('id_flight', ParseIntPipe) id_flight: number) {
-        return await this.flightService.getFlightSeats(id_flight);
+        return await this.flightService.getFlightFreeSeats(id_flight);
     }
 
     // @Get('/from/:id_airport_from/to/:id_airport_to')

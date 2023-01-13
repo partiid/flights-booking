@@ -6,10 +6,12 @@ import { DataGenerator } from 'src/classes/dataGenerator';
 
 import { AirportModule } from '../airport/airport.module';
 
+import { BookingModule } from '../booking/booking.module';
+
 @Module({
     controllers: [FlightController],
     providers: [FlightService, PrismaService],
     exports: [FlightService],
-    imports: [forwardRef(() => AirportModule)],
+    imports: [forwardRef(() => AirportModule), forwardRef(() => BookingModule)],
 })
 export class FlightModule { }

@@ -11,16 +11,17 @@ export class BookingModel {
     @IsInt()
     id_flight: number;
 
+
+
+
+
     @ApiProperty()
+    seats?: string;
+
     @IsInt()
     number_of_people: number;
 
-    @ApiProperty()
-    seats?: Array<number[]>;
-
-    @ApiProperty()
     price: number;
-
     date_booking: Date;
 
 
