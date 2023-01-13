@@ -191,11 +191,13 @@ export class FlightService implements ServiceInterface<Flight> {
 
 
         //seats taken for this flight 
-        const seatsOccupied: string[] = _.split(await this.bookingService.getBookingSeats(id_flight), ",");
+        let seatsOccupied: string[] = await this.bookingService.getBookingSeats(id_flight);
 
+        if (_.isEmpty(seatsOccupied) === true) {
+            return AircraftSeating.getSeatsTable(aircraft.capacity);
+        }
+        seatsOccupied = _.split(seatsOccupied, ',');
         let freeSeats = AircraftSeating.occupiedSeats(await this.getFlightSeats(id_flight), seatsOccupied);
-
-
         return freeSeats;
 
 
