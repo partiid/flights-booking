@@ -88,7 +88,7 @@ const seedFlights = async () => {
                     number: flight.number,
                 }
             });
-            if (_.empty(flightExists)) {
+            if (_.isEmpty(flightExists)) {
                 await prisma.flight.create({
                     data: {
                         number: flight.number,
