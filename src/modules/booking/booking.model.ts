@@ -18,9 +18,8 @@ export class BookingModel {
     @ApiProperty()
     seats?: string[];
 
-    @IsInt()
-    number_of_people: number;
 
+    number_of_people: number;
     price: number;
     date_booking: Date;
 
