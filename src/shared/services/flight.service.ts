@@ -120,7 +120,7 @@ export class FlightService implements ServiceInterface<Flight> {
         let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
             return id !== id_departure;
         });
-
+        //return connectedAirports;
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
