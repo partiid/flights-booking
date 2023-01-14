@@ -68,7 +68,7 @@ const seedAirportCities = async () => {
 
 const seedFlights = async () => {
     const generator = new DataGenerator();
-    const numOfFlights = 5000;
+    const numOfFlights = 3000;
 
     await prisma.airport.findMany().then(async (airports) => {
 
@@ -80,7 +80,6 @@ const seedFlights = async () => {
 
             let dateFormatted = new Date(moment(new Date(date)));
             let dateAdded = new Date(moment(dateFormatted).add(randomHour, 'hours'));
-
 
 
             let flight = {

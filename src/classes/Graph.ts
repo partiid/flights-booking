@@ -3,7 +3,7 @@ export class Graph {
     adjecencyList: Map<number, number[]>;
     searchResult: number[];
     paths: number[][];
-
+    tries: number;
 
     constructor() {
         this.adjecencyList = new Map();
@@ -90,29 +90,39 @@ export class Graph {
     }
 
     public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]): void {
+        console.log(localPathList, localPathList[localPathList.length - 1]);
+        this.tries++;
+
+        if (this.tries >= 3) {
+            return;
+        }
 
         if (departure == (destination)) {
-            //console.log(localPathList);
-            
+
             result = result.concat(localPathList);
             this.paths.push(result);
+
             return;
         }
 
         isVisited[departure] = true;
+        if (this.paths.length < 3) {
 
-        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                localPathList.push(this.adjecencyList.get(departure)[i]);
+            for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
 
-                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
+                if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+                    localPathList.push(this.adjecencyList.get(departure)[i]);
 
+                    this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
+
+                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
+                }
             }
+            isVisited[departure] = false;
         }
-        isVisited[departure] = false;
 
     }
     public getSearchResult() {

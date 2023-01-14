@@ -72,15 +72,17 @@ export class AirportService implements ServiceInterface<Airport>{
 
     async createAirportsGraph(): Promise<Graph> {
         let airports: Airport[] = await this.findAll();
-        let graph = new Graph();
-        airports.forEach(airport => {
-            graph.addNode(airport.id_airport);
-        })
-        let flightRoutes: flightRoute[] = await this.flightService.getFlightsRoutes();
-        flightRoutes.forEach((route: flightRoute) => {
-            graph.addEdge(route.departure.id, route.destination.id);
-        });
 
+        let graph = new Graph();
+        for (let airport of airports) {
+            graph.addNode(airport.id_airport);
+        }
+
+
+        let flightRoutes: flightRoute[] = await this.flightService.getFlightsRoutes();
+        for (let route of flightRoutes) {
+            graph.addEdge(route.departure.id, route.destination.id);
+        }
         return graph;
     }
 

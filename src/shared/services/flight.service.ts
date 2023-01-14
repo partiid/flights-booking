@@ -115,18 +115,23 @@ export class FlightService implements ServiceInterface<Flight> {
         //if direct flight is not available, find links between the airports 
         let connectedFlight: Array<Flight[]> = [];
         //search the graph
-        graph.dfs(id_departure, id_destination);
 
+        graph.dfs(id_departure, id_destination);
+        return graph;
+        Logger.log("getting graph search result")
         let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
             return id !== id_departure;
         });
+        Logger.log("Connetcted airports: ", connectedAirports.length);
 
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
         //find all flights that connect both airports 
+        Logger.log("getting graph paths")
         graph.findPaths(id_departure, id_destination);
         let possiblePaths: number[][] = graph.getPaths();
+        Logger.log("possible paths: " + possiblePaths);
         let possibleFlights: Array<Array<Flight[]>> = [];
 
         //assign possbile flights for every step of the path 
