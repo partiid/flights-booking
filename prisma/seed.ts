@@ -13,9 +13,12 @@ async function main() {
     await seedAircrafts();
     await seedFlights();
 }
-
+let allowed_countries = ['Poland', 'China', 'United States', 'Norway', 'Sweden', 'United Kingdom', 'Germany', 'France', 'Spain', 'Italy', 'Azerbaijan', 'Australia'];
 const seedAirports = async () => {
     for (const airport of airports) {
+        if (!allowed_countries.includes(airport.country)) {
+            continue;
+        }
         await prisma.airport.create({
             data: {
                 name: airport.name,
@@ -37,7 +40,13 @@ const seedAirports = async () => {
     }
 };
 const seedAirportCities = async () => {
+
+    //let allowed_countries = ['Poland', 'China', 'United States', 'Norway', 'Sweden', 'United Kingdom', 'Germany', 'France', 'Spain', 'Italy', 'Greece', 'Turkey', 'Russia', 'Ukraine', 'Belarus', 'Romania', 'Bulgaria', 'Czech Republic', 'Slovakia', 'Hungary', 'Austria', 'Switzerland', 'Netherlands', 'Belgium', 'Luxembourg', 'Portugal', 'Ireland', 'Denmark', 'Finland', 'Estonia', 'Latvia', 'Lithuania', 'Croatia', 'Serbia', 'Azerbaijan'];
+
     for (const airport of airports) {
+        if (!allowed_countries.includes(airport.country)) {
+            continue;
+        }
         await prisma.city.upsert({
             where: { name: airport.city },
             update: {},
@@ -59,7 +68,7 @@ const seedAirportCities = async () => {
 
 const seedFlights = async () => {
     const generator = new DataGenerator();
-    const numOfFlights = 10000;
+    const numOfFlights = 5000;
 
     await prisma.airport.findMany().then(async (airports) => {
 
