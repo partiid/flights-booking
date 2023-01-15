@@ -10,6 +10,7 @@ import { BookingService } from 'src/modules/booking/booking.service';
 import { Aircraft } from '@prisma/client';
 import * as _ from 'lodash';
 import 'lodash.combinations';
+import { Tools } from 'src/classes/Tools';
 
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
@@ -115,7 +116,22 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-
+        let flightRoutes: flightRoute[] = await this.getFlightsRoutes();
+        let ret = {
+            edges: flightRoutes.map(fr => {
+                return {
+                    from: fr.departure.id,
+                    to: fr.destination.id,
+                }
+            }),
+            nodes: await (await this.airportService.findAll()).map(a => {
+                return {
+                    id: a.id_airport,
+                    label: a.name,
+                }
+            })
+        }
+        return ret;
 
 
         //search the graph
@@ -130,6 +146,9 @@ export class FlightService implements ServiceInterface<Flight> {
         }
 
         //find all flights that connect both airports 
+        //do that for less than 10 seconds 
+
+
         graph.findPaths(id_departure, id_destination);
 
         let possiblePaths: number[][] = graph.getPaths();

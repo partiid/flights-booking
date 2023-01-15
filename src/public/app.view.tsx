@@ -1,20 +1,25 @@
 import { h, JSXTemplate } from 'nest-jsx-template-engine';
-import vis from 'vis';
+import { Network } from 'vis-network';
+import React, { useEffect, useRef } from 'react';
 export interface IAppProps {
     name: string;
     data: any
 }
 
-
 export function App(data: IAppProps, props: JSXTemplate.RenderProps): string {
 
-    let [dt] = data.data;
+
+
 
     return <html>
         <body>
-            <h1>Hello {JSON.stringify(data.data)}</h1>
+
         </body>
 
-
     </html>
+
+
+
+
+
 }

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Tools } from './Tools';
 export class Graph {
     public adjecencyList: Map<number, number[]>;
     searchResult: number[];
@@ -80,7 +81,7 @@ export class Graph {
 
             pathList.push(departure);
 
-            this.printAllPathsUntil(departure, destination, isVisited, pathList, result)
+            //Tools.killFunction(this.printAllPathsUntil(departure, destination, isVisited, pathList, result), 1000);
 
 
         }
@@ -133,7 +134,7 @@ export class Graph {
     }
     public getAdjecencyList() {
         //console.log(this.adjecencyList);
-        return this.adjecencyList;
+        return [...this.adjecencyList];
     }
     public getNode(departure: number) {
         return this.adjecencyList.get(departure);

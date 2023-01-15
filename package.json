@@ -28,15 +28,19 @@
     "@prisma/client": "^4.4.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "cluster": "^0.7.7",
     "lodash": "^4.17.21",
     "lodash.combinations": "^18.11.1",
     "moment": "^2.29.4",
     "nest-jsx-template-engine": "^0.2.6",
+    "react": "^18.2.0",
     "reflect-metadata": "^0.1.13",
     "regex-to-strings": "^2.1.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "vis": "^4.21.0-EOL"
+    "vis": "^4.21.0-EOL",
+    "vis-data": "^7.1.4",
+    "vis-network": "^9.1.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

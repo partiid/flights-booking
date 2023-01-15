@@ -12,7 +12,12 @@ export class FlightController {
         private readonly flightService: FlightService,
 
     ) { }
-
+    @Get('/graph')
+    async getGraph() {
+        let id_departure = 1;
+        let id_destination = 8;
+        return await this.flightService.findConnectedFlights(id_departure, id_destination);
+    }
     @Get('/all')
     async getFlights() {
         return await this.flightService.findAll();
