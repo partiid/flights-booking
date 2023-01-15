@@ -13,6 +13,7 @@ import 'lodash.combinations';
 
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
+import { connected } from 'process';
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
@@ -124,6 +125,7 @@ export class FlightService implements ServiceInterface<Flight> {
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
+        return connectedAirports;
         //find all flights that connect both airports 
         graph.findPaths(id_departure, id_destination);
         let possiblePaths: number[][] = graph.getPaths();

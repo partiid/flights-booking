@@ -102,21 +102,21 @@ export class Graph {
         //console.log("Paths:", this.paths);
 
         isVisited[departure] = true;
-        if (this.paths.length < 1) {
-            for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-                if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                    localPathList.push(this.adjecencyList.get(departure)[i]);
+        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                    this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
+                localPathList.push(this.adjecencyList.get(departure)[i]);
 
-                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
 
-                }
-                //console.log("Printing paths until: ", i);
+                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
             }
-            isVisited[departure] = false;
+            //console.log("Printing paths until: ", i);
         }
+        isVisited[departure] = false;
+
 
 
     }
