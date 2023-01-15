@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 export class Graph {
-    adjecencyList: Map<number, number[]>;
+    public adjecencyList: Map<number, number[]>;
     searchResult: number[];
     paths: number[][];
 
@@ -10,11 +10,10 @@ export class Graph {
         this.searchResult = [];
         this.paths = [];
 
-
     }
 
-    public addNode(airport: number) {
-        this.adjecencyList.set(airport, []);
+    public addNode(departure: number) {
+        this.adjecencyList.set(departure, []);
     }
 
     public addEdge(departure: number, destination: number) {
@@ -22,6 +21,7 @@ export class Graph {
         this.adjecencyList.get(departure).push(destination);
         //this.adjecencyList.get(destination).push(departure);
     }
+
 
     public bfs(start: number) {
         let queue: number[] = [];
@@ -102,21 +102,25 @@ export class Graph {
         //console.log("Paths:", this.paths);
 
         isVisited[departure] = true;
+        if (this.paths.length < 1) {
 
-        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                localPathList.push(this.adjecencyList.get(departure)[i]);
+            for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+                if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
+                    localPathList.push(this.adjecencyList.get(departure)[i]);
 
-                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+                    this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
 
+                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
+                }
+                //console.log("Printing paths until: ", i);
             }
-            //console.log("Printing paths until: ", i);
-        }
-        isVisited[departure] = false;
+            isVisited[departure] = false;
 
+
+        }
 
 
     }
@@ -128,10 +132,14 @@ export class Graph {
         this.searchResult = [];
     }
     public getAdjecencyList() {
+        //console.log(this.adjecencyList);
         return this.adjecencyList;
     }
     public getNode(departure: number) {
         return this.adjecencyList.get(departure);
+    }
+    public hasNode(departure: number) {
+        return this.adjecencyList.has(departure);
     }
 
 

@@ -31,10 +31,12 @@
     "lodash": "^4.17.21",
     "lodash.combinations": "^18.11.1",
     "moment": "^2.29.4",
+    "nest-jsx-template-engine": "^0.2.6",
     "reflect-metadata": "^0.1.13",
     "regex-to-strings": "^2.1.0",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "vis": "^4.21.0-EOL"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

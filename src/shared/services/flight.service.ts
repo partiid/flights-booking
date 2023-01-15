@@ -103,8 +103,10 @@ export class FlightService implements ServiceInterface<Flight> {
     }
     //find flights from to 
     //if direct flight is not found, find connected ones 
+
     async findConnectedFlights(id_departure: number, id_destination: number) {
         const graph: Graph = await this.airportService.createAirportsGraph();
+
 
         //first check if direct flight is available
         let directFlight: Flight[] = await this.getDirectFlight(id_departure, id_destination);
@@ -113,8 +115,9 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-        //if direct flight is not available, find links between the airports 
-        let connectedFlight: Array<Flight[]> = [];
+
+
+
         //search the graph
         graph.dfs(id_departure, id_destination);
 
@@ -125,9 +128,10 @@ export class FlightService implements ServiceInterface<Flight> {
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
-        return connectedAirports;
+
         //find all flights that connect both airports 
         graph.findPaths(id_departure, id_destination);
+
         let possiblePaths: number[][] = graph.getPaths();
         let possibleFlights: Array<Array<Flight[]>> = [];
 
@@ -136,12 +140,6 @@ export class FlightService implements ServiceInterface<Flight> {
             let flight: Array<Flight[]> = [];
             for (let i = 0; i < path.length - 1; i++) {
                 let flights: Flight[] = await this.getDirectFlight(path[i], path[i + 1]);
-                //when there's more than one flight found, create separate array for each flight 
-                // if (flights.length > 1) {
-                //     for (let j = 0; j < flights.length - 1; j++) {
-                //         flights.concat(await this.getDirectFlight(flights[j].id_destination, path[i]));
-                //     }
-                // }
 
                 flight.push(flights)
 
@@ -153,17 +151,7 @@ export class FlightService implements ServiceInterface<Flight> {
 
         return possibleFlights;
 
-        // let combinationFlightIds = possibleFlights.map((route) => {
-        //     let routeFlightIds: number[] = [];
-        //     route.forEach(flights => {
-        //         let flightIds = flights.map(f => f.id_flight);
-        //         routeFlightIds.push(...flightIds);
-        //     });
 
-        //     let combinations = _.combinations(routeFlightIds, route.length);
-
-        //     return combinations;
-        // });
 
 
 

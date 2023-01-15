@@ -1,7 +1,8 @@
 import { Controller, Get, Param, ParseIntPipe, Logger } from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
-
+import { IAppProps, App } from 'src/public/app.view';
 import { ApiTags } from '@nestjs/swagger';
+import { Render } from 'nest-jsx-template-engine';
 
 @ApiTags('flights')
 @Controller('flights')
