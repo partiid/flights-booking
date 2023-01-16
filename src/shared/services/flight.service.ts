@@ -116,42 +116,28 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-        let flightRoutes: flightRoute[] = await this.getFlightsRoutes();
-        let ret = {
-            edges: flightRoutes.map(fr => {
-                return {
-                    from: fr.departure.id,
-                    to: fr.destination.id,
-                }
-            }),
-            nodes: (await this.airportService.findAll()).map(a => {
-                return {
-                    id: a.id_airport,
-                    label: a.name
-                }
-            })
-        }
-
-
-
-        //search the graph
+        //if there's no direct flight available search the graph to find connected airports
         graph.dfs(id_departure, id_destination);
 
         let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
             return id !== id_departure;
         });
-        //return connectedAirports;
+        // //return connectedAirports;
         if (_.isEmpty(connectedAirports) === true) {
             return [];
         }
 
         //find all flights that connect both airports 
         //do that for less than 10 seconds 
-
-
         graph.findPaths(id_departure, id_destination);
 
         let possiblePaths: number[][] = graph.getPaths();
+
+        //if path contains more than 4 connected flights, remove it
+        // possiblePaths = _.remove(possiblePaths, (path: number[]) => {
+        //     return path.length <= 4;
+        // });
+
         let possibleFlights: Array<Array<Flight[]>> = [];
 
         //assign possbile flights for every step of the path 

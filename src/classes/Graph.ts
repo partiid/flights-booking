@@ -4,7 +4,8 @@ export class Graph {
     public adjecencyList: Map<number, number[]>;
     searchResult: number[];
     paths: number[][];
-
+    tries: number = 0;
+    found: boolean = false;
 
     constructor() {
         this.adjecencyList = new Map();
@@ -46,6 +47,31 @@ export class Graph {
 
         return result;
     }
+    public bfsv2(start: number, desired_destination: number): number[] {
+        let queue: number[] = [start];
+        const visited = new Set();
+        while (queue.length > 0) {
+            const airport = queue.shift();
+
+            const destinations = this.adjecencyList.get(airport);
+
+            for (let destination of destinations) {
+
+                if (destination === desired_destination) {
+                    console.log("Found destination: ", destination);
+
+                }
+
+                if (!visited.has(destination)) {
+                    visited.add(destination);
+                    queue.push(destination);
+                    console.log("Destination: ", destination);
+                }
+
+            }
+        }
+        return _.toArray(queue);
+    }
     public dfs(start: number, desired_destination: number, visited = new Set()): number[] {
         console.log("start: ", start);
         this.searchResult.push(start);
@@ -62,6 +88,7 @@ export class Graph {
         }
     }
 
+
     //write a function to get a vertices count 
     public getNodeCount(): number {
         return this.adjecencyList.size;
@@ -73,7 +100,7 @@ export class Graph {
 
         let isVisited: Array<boolean> = new Array(nodeCount);
         let result = [];
-        console.log("Node Count: ", nodeCount);
+
         for (let i = 0; i < nodeCount; i++) {
             isVisited[i] = false;
             console.log("Iteration: ", i);
@@ -81,50 +108,68 @@ export class Graph {
 
             pathList.push(departure);
 
-            //Tools.killFunction(this.printAllPathsUntil(departure, destination, isVisited, pathList, result), 1000);
+            this.printAllPathsUntil(departure, destination, isVisited, pathList, result);
+
 
 
         }
 
-
     }
+
     public getPaths() {
         return _.uniqWith(this.paths, _.isEqual());
     }
 
-    public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]): boolean {
+    public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]) {
+        //increment route search try count to break the loop if no more routes are available
+        this.tries++;
+        //break the loop if no more routes are available 
+        if (_.isEmpty(result) && this.tries > this.getNodeCount()) {
+
+            this.found = true;
+        }
+
+
+
+
 
         if (departure == (destination)) {
+
             result = result.concat(localPathList);
+            console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", result)
             this.paths.push(result);
-            console.log("Paths found: ", this.paths.length);
+
             return;
+
         }
-        //console.log("Paths:", this.paths);
 
         isVisited[departure] = true;
-        if (this.paths.length < 1) {
 
 
-            for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-                if (!isVisited[this.adjecencyList.get(departure)[i]]) {
+        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-                    localPathList.push(this.adjecencyList.get(departure)[i]);
+                localPathList.push(this.adjecencyList.get(departure)[i]);
+                if (this.found == false) {
 
                     this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
-
-                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
-
                 }
-                //console.log("Printing paths until: ", i);
+
+                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
             }
-            isVisited[departure] = false;
-
-
+            //console.log("Printing paths until: ", i);
         }
+
+        isVisited[departure] = false;
+
+
+
 
 
     }
+
+
     public getSearchResult() {
         return this.searchResult;
     }
