@@ -13,7 +13,7 @@ export class Tools {
 
     static getCycle(G, n, path) {
         if (path.includes(n)) {
-            throw `cycle ${path.slice(path.indexOf(n)).concat(n).join('<-')}`
+            throw new Error(`cycle ${path.slice(path.indexOf(n)).concat(n).join('<-')}`);
         }
         path.push(n)
         return G[n].forEach(next => this.getCycle(G, next, path.slice(0)))

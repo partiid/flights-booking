@@ -102,6 +102,12 @@ export class Graph {
         let isVisited: Array<boolean> = new Array(nodeCount);
         let result = [];
 
+        //validate self to check if it has cycles, if so then we need to search the paths only couple of times 
+        try {
+            Tools.validateGraph(this.getAdjecencyListObject())
+        } catch (e) {
+            console.log(e)
+        }
         for (let i = 0; i < nodeCount; i++) {
 
             isVisited[i] = false;
@@ -151,7 +157,7 @@ export class Graph {
             if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
                 //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
-                if (this.tries <= 1000) {
+                if (this.tries <= 100) {
 
                     localPathList.push(this.adjecencyList.get(departure)[i]);
                     this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
@@ -187,6 +193,9 @@ export class Graph {
     public getAdjecencyList() {
         //console.log(this.adjecencyList);
         return [...this.adjecencyList];
+    }
+    public getAdjecencyListObject() {
+        return Object.fromEntries(this.adjecencyList);
     }
     public getAdjecencyListMap() {
         return this.adjecencyList;

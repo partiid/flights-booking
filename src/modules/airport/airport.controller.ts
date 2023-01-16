@@ -16,6 +16,11 @@ export class AirportController {
         return await this.airportService.findAll();
     }
 
+    @Get('/graph/')
+    async getGraph(): Promise<any> {
+        return await this.airportService.getAirportsGraphObject();
+
+    }
     @Get('/:id_airport')
     async getAirportById(@Param('id_airport', ParseIntPipe) id_airport: number) {
         return await this.airportService.findOne({ id_airport: id_airport });
@@ -24,6 +29,8 @@ export class AirportController {
     async getAirportsByCountry(@Param('id_country', ParseIntPipe) id_country: number) {
         return await this.airportService.findMany({ id_country: id_country });
     }
+
+
 
 
 
