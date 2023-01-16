@@ -106,7 +106,16 @@ export class FlightService implements ServiceInterface<Flight> {
     //if direct flight is not found, find connected ones 
 
     async findConnectedFlights(id_departure: number, id_destination: number) {
+
+        const maxConnectedFlightLength = 6; //TODO add it an api param
+
         const graph: Graph = await this.airportService.createAirportsGraph();
+
+        //check if graph is cyclic
+        //console.log(Object.fromEntries(graph.getAdjecencyListMap()));
+        //console.log(Tools.validateGraph(Object.fromEntries(graph.getAdjecencyList())));
+        //Tools.validateGraph(graph.getAdjecencyList());
+        //return;
 
 
         //first check if direct flight is available
@@ -133,11 +142,13 @@ export class FlightService implements ServiceInterface<Flight> {
 
         let possiblePaths: number[][] = graph.getPaths();
 
-        //if path contains more than 4 connected flights, remove it
-        // possiblePaths = _.remove(possiblePaths, (path: number[]) => {
-        //     return path.length <= 4;
-        // });
 
+
+        //if path contains more than 4 connected flights, remove it
+        possiblePaths = _.remove(possiblePaths, (path: number[]) => {
+            return path.length <= maxConnectedFlightLength;
+        });
+        return possiblePaths;
         let possibleFlights: Array<Array<Flight[]>> = [];
 
         //assign possbile flights for every step of the path 
