@@ -86,6 +86,27 @@ export class AirportService implements ServiceInterface<Airport>{
 
         return graph;
     }
+    async getAirportsGraph(): Promise<Object> {
+
+
+
+        let flightRoutes: flightRoute[] = await this.flightService.getFlightsRoutes();
+        let ret = {
+            edges: flightRoutes.map(fr => {
+                return {
+                    from: fr.departure.id,
+                    to: fr.destination.id,
+                }
+            }),
+            nodes: (await this.findAll()).map(a => {
+                return {
+                    id: a.id_airport,
+                    label: a.name
+                }
+            })
+        }
+        return ret;
+    }
 
 
 }

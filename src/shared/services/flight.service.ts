@@ -124,14 +124,14 @@ export class FlightService implements ServiceInterface<Flight> {
                     to: fr.destination.id,
                 }
             }),
-            nodes: await (await this.airportService.findAll()).map(a => {
+            nodes: (await this.airportService.findAll()).map(a => {
                 return {
                     id: a.id_airport,
-                    label: a.name,
+                    label: a.name
                 }
             })
         }
-        return ret;
+
 
 
         //search the graph
