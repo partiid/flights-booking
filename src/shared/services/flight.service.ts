@@ -126,11 +126,23 @@ export class FlightService implements ServiceInterface<Flight> {
         }
 
         //if there's no direct flight available search the graph to find connected airports
-        graph.dfs(id_departure, id_destination);
+        graph.dfsModified(id_departure, id_destination);
+        return;
+        //get duplicates from the search result 
+
+
+        //do we really need connected airports? 
+        //we can just check if the destination is in the search result
+        //if it is, we can find all paths from departure to destination
+        //if it's not, we can return empty array
+        //
+
 
         let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
             return id !== id_departure;
         });
+        console.log(connectedAirports.length, graph.getNodeCount());
+        return connectedAirports;
         // //return connectedAirports;
         if (_.isEmpty(connectedAirports) === true) {
             return [];
@@ -144,11 +156,11 @@ export class FlightService implements ServiceInterface<Flight> {
 
 
 
-        //if path contains more than 4 connected flights, remove it
-        possiblePaths = _.remove(possiblePaths, (path: number[]) => {
-            return path.length <= maxConnectedFlightLength;
-        });
-        return possiblePaths;
+        //if path contains more than defined connected flights, remove it
+        // possiblePaths = _.remove(possiblePaths, (path: number[]) => {
+        //     return path.length <= maxConnectedFlightLength;
+        // });
+
         let possibleFlights: Array<Array<Flight[]>> = [];
 
         //assign possbile flights for every step of the path 

@@ -74,9 +74,10 @@ export class Graph {
         return _.toArray(queue);
     }
     public dfs(start: number, desired_destination: number, visited = new Set()): number[] {
-        console.log("start: ", start);
-        this.searchResult.push(start);
 
+
+
+        this.searchResult.push(start);
         visited.add(start);
         const destinations = this.adjecencyList.get(start);
         for (let destination of destinations) {
@@ -85,9 +86,49 @@ export class Graph {
             }
             if (!visited.has(destination)) {
                 this.dfs(destination, desired_destination, visited);
+
             }
         }
     }
+
+    public dfsModified(start: number, desired_destination: number, visited = new Set(), nodeVisitCount = new Map()) {
+
+        visited.add(start);
+
+        if (!nodeVisitCount.has(start)) {
+            nodeVisitCount.set(start, 1);
+        }
+        //check if the node has been visited more than 2 times, if so then we need to break the loop
+        if (nodeVisitCount.get(start) > 2) {
+            //set the start node to last visited node to traverse to the neigbour if they exist
+
+            //get next element in map
+
+            //get index of current key 
+            let index = Object.keys(this.getAdjecencyListObject()).indexOf(start.toString());
+            //get next key
+            let nextKey = Object.keys(this.getAdjecencyListObject())[index + 1];
+            start = parseInt(nextKey);
+
+
+
+        }
+
+        const destinations = this.adjecencyList.get(start);
+        for (let destination of destinations) {
+            if (destination === desired_destination) {
+
+                console.log("Found destination: ", destination);
+                console.log("Visited: ", [...visited]);
+                return;
+            }
+            if (!visited.has(destination)) {
+                this.dfsModified(destination, desired_destination, visited, nodeVisitCount);
+            }
+
+        }
+    }
+
 
 
     //write a function to get a vertices count 
@@ -103,25 +144,32 @@ export class Graph {
         let result = [];
 
         //validate self to check if it has cycles, if so then we need to search the paths only couple of times 
+        let cyclic: boolean = false;
+        let cycledNode: number = 0;
         try {
-            Tools.validateGraph(this.getAdjecencyListObject())
+            this.validateCycle(this.getAdjecencyListObject())
         } catch (e) {
-            console.log(e)
+            //remove cycled node from search
+            console.log(e);
+
+
+        } finally {
+
+            for (let i = 0; i < nodeCount; i++) {
+
+                isVisited[i] = false;
+                // console.log("🚀 ~ file: Graph.ts:107 ~ Graph ~ findPaths ~ i", i)
+                //console.log("Iteration: ", i);
+                let pathList: Array<number> = [];
+                // console.log("iteration: ", i);
+                pathList.push(departure);
+
+                this.printAllPathsUntil(departure, destination, isVisited, pathList, result);
+
+
+            }
         }
-        for (let i = 0; i < nodeCount; i++) {
 
-            isVisited[i] = false;
-            console.log("🚀 ~ file: Graph.ts:107 ~ Graph ~ findPaths ~ i", i)
-            //console.log("Iteration: ", i);
-            let pathList: Array<number> = [];
-            console.log("iteration: ", i);
-            pathList.push(departure);
-
-            this.printAllPathsUntil(departure, destination, isVisited, pathList, result);
-
-
-
-        }
 
     }
 
@@ -132,32 +180,26 @@ export class Graph {
     public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]) {
         //increment route search try count to break the loop if no more routes are available
         this.tries++;
-        //break the loop if no more routes are available 
-        // if () {
-
-        //     this.found = true;
-        // }
-
-
 
         if (departure == (destination)) {
 
             result = result.concat(localPathList);
             //console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", result)
             this.paths.push(result);
-
+            console.log("Route found: ", result, "Route length: ", result.length);
             return;
 
         }
 
+
         isVisited[departure] = true;
 
-
         for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+
             if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
                 //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
-                if (this.tries <= 100) {
+                if (this.tries <= 2000) {
 
                     localPathList.push(this.adjecencyList.get(departure)[i]);
                     this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
@@ -180,6 +222,18 @@ export class Graph {
 
 
 
+    }
+    public getCycle(G, n, path) {
+        if (path.includes(n)) {
+            //throw new Array(path.slice(path.indexOf(n)).concat(n));
+            throw new Error(`cycle ${path.slice(path.indexOf(n)).concat(n).join('<-')}`);
+
+        }
+        path.push(n)
+        return G[n].forEach(next => this.getCycle(G, next, path.slice(0)))
+    }
+    public validateCycle(G) {
+        Object.keys(G).forEach(n => this.getCycle(G, n, []))
     }
 
 

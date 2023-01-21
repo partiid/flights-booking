@@ -7,8 +7,10 @@ import { CountryModule } from './modules/country/country.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { RenderMiddleware } from 'nest-jsx-template-engine';
+import { EmployeeModule } from './modules/employee/employee.module';
+import { AuthModule } from './modules/auth/auth.module';
 @Module({
-    imports: [FlightModule, AirportModule, CountryModule, CustomerModule, BookingModule],
+    imports: [FlightModule, AirportModule, CountryModule, CustomerModule, BookingModule, EmployeeModule, AuthModule],
     controllers: [AppController],
     providers: [AppService],
 })

@@ -86,3 +86,15 @@ model Customer {
   identification_number String    @unique(map: "identification_number")
   Bookings              Booking[]
 }
+
+model Employee {
+  id_employee Int          @id @default(autoincrement())
+  login       String       @unique
+  password    String
+  role        EmployeeRole
+}
+
+enum EmployeeRole {
+  USER
+  ADMIN
+}
