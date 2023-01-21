@@ -66,9 +66,31 @@ const seedAirportCities = async () => {
     }
 };
 
+const calculteDistanceBetweenAirports = (lat1, lon1, lat2, lon2, unit = "K") => {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    }
+    else {
+        var radlat1 = Math.PI * lat1 / 180;
+        var radlat2 = Math.PI * lat2 / 180;
+        var theta = lon1 - lon2;
+        var radtheta = Math.PI * theta / 180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180 / Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit == "K") { dist = dist * 1.609344 }
+        if (unit == "N") { dist = dist * 0.8684 }
+        return dist;
+    }
+}
+
 const seedFlights = async () => {
     const generator = new DataGenerator();
-    const numOfFlights = 5000;
+    const numOfFlights = 500;
 
     await prisma.airport.findMany().then(async (airports) => {
 
@@ -79,9 +101,22 @@ const seedFlights = async () => {
             let date = generator.genRandomDateTimestamp();
 
             let dateFormatted = new Date(moment(new Date(date)));
-            let dateAdded = new Date(moment(dateFormatted).add(randomHour, 'hours'));
 
 
+            let randomAircraft = Math.floor(Math.random() * (100 - 1) + 1);
+
+
+            //get the random choosen aircraft speed to calculate the flight duration
+            let aircraft = await prisma.aircraft.findFirst({
+                where: {
+                    id_aircraft: randomAircraft
+                }
+            });
+
+            let flightDistance = calculteDistanceBetweenAirports(airports[randomAirport].geo_lat, airports[randomAirport].geo_long, airports[randomAirport2].geo_lat, airports[randomAirport2].geo_long);
+            let flightDuration = flightDistance / aircraft.avg_speed;
+
+            let dateAdded = new Date(moment(dateFormatted).add(flightDuration, 'hours'));
 
             let flight = {
                 number: generator.genFlightNumber(),
@@ -103,9 +138,11 @@ const seedFlights = async () => {
                         number: flight.number,
                         airport_departure: { connect: { id_airport: flight.airport_departure } },
                         airport_destination: { connect: { id_airport: flight.airport_destination } },
-                        Aircraft: { connect: { id_aircraft: Math.floor(Math.random() * (100 - 1) + 1) } },
+                        Aircraft: { connect: { id_aircraft: randomAircraft } },
                         date_departure: flight.date_departure,
                         date_arrival: flight.date_arrival,
+                        duration: flightDuration,
+                        distance: flightDistance,
                         price: flight.price,
                     }
                 });
@@ -129,6 +166,7 @@ const seedAircrafts = async () => {
                 manufacturer,
                 registration: generator.genAircraftRegistration(),
                 capacity: Math.floor(Math.random() * (128 - 30) + 30),
+                avg_speed: generator.genAircraftSpeed()
             },
         });
     }

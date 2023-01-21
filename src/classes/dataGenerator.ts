@@ -17,8 +17,8 @@ export class DataGenerator {
     }
 
     genRandomDateTimestamp(): number {
-        var startDate = new Date(2021, 0, 1).getTime();
-        var endDate = new Date(2022, 0, 1).getTime();
+        var startDate = new Date(2022, 0, 1).getTime();
+        var endDate = new Date(2023, 0, 1).getTime();
         var spaces = (endDate - startDate);
         var timestamp = Math.round(Math.random() * spaces);
         timestamp += startDate;
@@ -73,6 +73,11 @@ export class DataGenerator {
         for (const registration of pattern.getIterator()) {
             return registration;
         }
+    }
+    genAircraftSpeed(): number {
+        let max_avg = 930;
+        let min_avg = 750;
+        return Math.floor(Math.random() * (max_avg - min_avg) + min_avg);
     }
 
 }

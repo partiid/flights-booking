@@ -19,6 +19,8 @@ model Flight {
   id_aircraft         Int?
   id_departure        Int
   id_destination      Int
+  duration            Float
+  distance            Float
   date_departure      DateTime
   date_arrival        DateTime
   price               Float
@@ -45,6 +47,7 @@ model Aircraft {
   registration String
   manufacturer String
   capacity     Int
+  avg_speed    Int
   Flights      Flight[]
 }
 

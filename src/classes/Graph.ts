@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Tools } from './Tools';
 export class Graph {
     public adjecencyList: Map<number, number[]>;
-    searchResult: number[];
+    searchResult;
     paths: number[][];
     tries: number = 0;
     found: boolean = false;
@@ -77,11 +77,19 @@ export class Graph {
 
 
 
-        this.searchResult.push(start);
+
         visited.add(start);
         const destinations = this.adjecencyList.get(start);
+        if (destinations.includes(desired_destination)) {
+            this.searchResult.push(start);
+        }
+
         for (let destination of destinations) {
+
             if (destination === desired_destination) {
+                console.log("Found destination: ", destination);
+                console.log("Visited: ", [...visited]);
+
                 return;
             }
             if (!visited.has(destination)) {
@@ -99,7 +107,7 @@ export class Graph {
             nodeVisitCount.set(start, 1);
         }
         //check if the node has been visited more than 2 times, if so then we need to break the loop
-        if (nodeVisitCount.get(start) > 2) {
+        if (nodeVisitCount.get(start) > 1) {
             //set the start node to last visited node to traverse to the neigbour if they exist
 
             //get next element in map
@@ -109,8 +117,6 @@ export class Graph {
             //get next key
             let nextKey = Object.keys(this.getAdjecencyListObject())[index + 1];
             start = parseInt(nextKey);
-
-
 
         }
 
@@ -195,7 +201,6 @@ export class Graph {
         isVisited[departure] = true;
 
         for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-
             if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
                 //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
@@ -238,6 +243,7 @@ export class Graph {
 
 
     public getSearchResult() {
+        console.log(this.searchResult);
         return this.searchResult;
     }
 

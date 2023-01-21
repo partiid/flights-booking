@@ -111,13 +111,6 @@ export class FlightService implements ServiceInterface<Flight> {
 
         const graph: Graph = await this.airportService.createAirportsGraph();
 
-        //check if graph is cyclic
-        //console.log(Object.fromEntries(graph.getAdjecencyListMap()));
-        //console.log(Tools.validateGraph(Object.fromEntries(graph.getAdjecencyList())));
-        //Tools.validateGraph(graph.getAdjecencyList());
-        //return;
-
-
         //first check if direct flight is available
         let directFlight: Flight[] = await this.getDirectFlight(id_departure, id_destination);
 
@@ -126,9 +119,10 @@ export class FlightService implements ServiceInterface<Flight> {
         }
 
         //if there's no direct flight available search the graph to find connected airports
-        graph.dfsModified(id_departure, id_destination);
-        return;
-        //get duplicates from the search result 
+        // graph.dfs(id_departure, id_destination);
+        // graph.getSearchResult();
+        // return;
+    
 
 
         //do we really need connected airports? 
@@ -138,15 +132,15 @@ export class FlightService implements ServiceInterface<Flight> {
         //
 
 
-        let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
-            return id !== id_departure;
-        });
-        console.log(connectedAirports.length, graph.getNodeCount());
-        return connectedAirports;
+        // let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
+        //     return id !== id_departure;
+        // });
+        // console.log(connectedAirports.length, graph.getNodeCount());
+        //return connectedAirports;
         // //return connectedAirports;
-        if (_.isEmpty(connectedAirports) === true) {
-            return [];
-        }
+        // if (_.isEmpty(connectedAirports) === true) {
+        //     return [];
+        // }
 
         //find all flights that connect both airports 
         //do that for less than 10 seconds 
