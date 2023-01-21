@@ -5,6 +5,8 @@ import { ApiResponseInterceptor } from './interceptors/apiResponse.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import * as Redis from 'ioredis';
+
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { cors: true });
 
