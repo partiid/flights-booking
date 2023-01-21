@@ -3,10 +3,24 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApiResponseInterceptor } from './interceptors/apiResponse.interceptor';
 import { ValidationPipe } from '@nestjs/common';
-
+import * as session from 'express-session';
+import * as passport from 'passport';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { cors: true });
-    //setup api response
+
+
+    //setup session 
+    app.use(session({
+        secret: '125A6SD1AS56D1',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 60000,
+            secure: false, //set this to false for now, since we are not using https 
+        }
+    }));
+    app.use(passport.initialize());
+    app.use(passport.session());
     app.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header(
@@ -15,7 +29,9 @@ async function bootstrap() {
         );
         next();
     });
+    //setup api response
     app.useGlobalInterceptors(new ApiResponseInterceptor());
+    //add validation via class validator
     app.useGlobalPipes(new ValidationPipe());
     //setup swagger
     const config = new DocumentBuilder()
@@ -25,6 +41,8 @@ async function bootstrap() {
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
+
+    //use cors for all routes
     app.enableCors({
         origin: true,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
