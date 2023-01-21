@@ -13,6 +13,7 @@ export class Graph {
         this.searchResult = [];
         this.paths = [];
 
+
     }
 
     public addNode(departure: number) {
@@ -147,71 +148,58 @@ export class Graph {
         const nodeCount: number = this.getNodeCount();
 
         let isVisited: Array<boolean> = new Array(nodeCount);
-        let result = [];
 
-        //validate self to check if it has cycles, if so then we need to search the paths only couple of times 
-        let cyclic: boolean = false;
-        let cycledNode: number = 0;
-        try {
-            this.validateCycle(this.getAdjecencyListObject())
-        } catch (e) {
-            //remove cycled node from search
-            console.log(e);
+        let pathList: Array<number> = [];
+        // console.log("iteration: ", i);
+        pathList.push(departure);
 
 
-        } finally {
+        this.printAllPathsUntil(departure, destination, isVisited, pathList);
 
-            for (let i = 0; i < nodeCount; i++) {
-
-                isVisited[i] = false;
-                // console.log("🚀 ~ file: Graph.ts:107 ~ Graph ~ findPaths ~ i", i)
-                //console.log("Iteration: ", i);
-                let pathList: Array<number> = [];
-                // console.log("iteration: ", i);
-                pathList.push(departure);
-
-                this.printAllPathsUntil(departure, destination, isVisited, pathList, result);
-
-
-            }
-        }
 
 
     }
 
     public getPaths() {
-        return _.uniqWith(this.paths, _.isEqual());
+        //return array of unique arrays
+
+
+
+
+        return _.uniqWith(this.paths, _.isEqual);
     }
 
-    public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[], result: number[]) {
+    public printAllPathsUntil(departure: number, destination: number, isVisited: boolean[], localPathList: number[]) {
         //increment route search try count to break the loop if no more routes are available
-        this.tries++;
+
+        isVisited[departure] = true;
 
         if (departure == (destination)) {
 
-            result = result.concat(localPathList);
+
+            this.paths.push([...localPathList]);
+            console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", localPathList);
+
             //console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", result)
-            this.paths.push(result);
-            console.log("Route found: ", result, "Route length: ", result.length);
+            isVisited[departure] = false;
+            //console.log("Route found: ", result, "Route length: ", result.length);
             return;
 
         }
 
 
-        isVisited[departure] = true;
 
         for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
-            if (!isVisited[this.adjecencyList.get(departure)[i]]) {
+
+            if (!isVisited[i]) {
 
                 //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
-                if (this.tries <= 2000) {
 
-                    localPathList.push(this.adjecencyList.get(departure)[i]);
-                    this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList, result);
-                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
-                } else {
-                    break;
-                }
+
+                localPathList.push(this.adjecencyList.get(departure)[i]);
+                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList);
+                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
                 // } else {
                 //     break;
                 // }
@@ -222,10 +210,6 @@ export class Graph {
         }
 
         isVisited[departure] = false;
-
-
-
-
 
     }
     public getCycle(G, n, path) {

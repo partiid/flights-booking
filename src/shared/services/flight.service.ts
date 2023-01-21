@@ -118,20 +118,6 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-        //if there's no direct flight available search the graph to find connected airports
-        // graph.dfs(id_departure, id_destination);
-        // graph.getSearchResult();
-        // return;
-    
-
-
-        //do we really need connected airports? 
-        //we can just check if the destination is in the search result
-        //if it is, we can find all paths from departure to destination
-        //if it's not, we can return empty array
-        //
-
-
         // let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
         //     return id !== id_departure;
         // });
