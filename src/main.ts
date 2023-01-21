@@ -5,14 +5,20 @@ import { ApiResponseInterceptor } from './interceptors/apiResponse.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
+
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { cors: true });
 
 
+    //setup redis session store
+    const RedisStore = require('connect-redis')(session);
+    const redisClient = new Redis();
+
     //setup session 
     app.use(session({
+        store: new RedisStore({ client: redisClient, logErrors: true }),
         secret: '125A6SD1AS56D1',
         resave: false,
         saveUninitialized: false,
