@@ -118,7 +118,7 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-        let pathFinder = path.aStar(graph);
+        let pathFinder = path.aStar(graph, { oriented: true });
         let pathFound = pathFinder.find(id_departure, id_destination);
         let possiblePaths = _.reverse(pathFound.map(e => {
             return e.id;
