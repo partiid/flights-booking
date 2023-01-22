@@ -37,6 +37,8 @@
     "lodash.combinations": "^18.11.1",
     "moment": "^2.29.4",
     "nest-jsx-template-engine": "^0.2.6",
+    "ngraph.graph": "^20.0.1",
+    "ngraph.path": "^1.4.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "react": "^18.2.0",
@@ -44,10 +46,7 @@
     "reflect-metadata": "^0.1.13",
     "regex-to-strings": "^2.1.0",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
-    "vis": "^4.21.0-EOL",
-    "vis-data": "^7.1.4",
-    "vis-network": "^9.1.2"
+    "rxjs": "^7.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

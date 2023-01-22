@@ -52,22 +52,33 @@ export class Graph {
     public bfsv2(start: number, desired_destination: number): number[] {
         let queue: number[] = [start];
         const visited = new Set();
+        const predecesors = new Array(this.getNodeCount())
         while (queue.length > 0) {
             const airport = queue.shift();
 
             const destinations = this.adjecencyList.get(airport);
 
+
             for (let destination of destinations) {
 
                 if (destination === desired_destination) {
-                    console.log("Found destination: ", destination);
+                    const path = [destination];
+                    let predecesor = predecesors[destination];
+                    while (predecesor !== undefined) {
+                        path.unshift(predecesor);
+                        predecesor = predecesors[predecesor];
+                    }
+                    return path;
+
 
                 }
+
 
                 if (!visited.has(destination)) {
                     visited.add(destination);
                     queue.push(destination);
-                    console.log("Destination: ", destination);
+
+
                 }
 
             }
@@ -100,37 +111,23 @@ export class Graph {
         }
     }
 
-    public dfsModified(start: number, desired_destination: number, visited = new Set(), nodeVisitCount = new Map()) {
+    public dfsModified(start: number, desired_destination: number, visited = new Set(), path = []) {
 
         visited.add(start);
 
-        if (!nodeVisitCount.has(start)) {
-            nodeVisitCount.set(start, 1);
+        if (start === desired_destination) {
+            return [...path, start];
         }
-        //check if the node has been visited more than 2 times, if so then we need to break the loop
-        if (nodeVisitCount.get(start) > 1) {
-            //set the start node to last visited node to traverse to the neigbour if they exist
-
-            //get next element in map
-
-            //get index of current key 
-            let index = Object.keys(this.getAdjecencyListObject()).indexOf(start.toString());
-            //get next key
-            let nextKey = Object.keys(this.getAdjecencyListObject())[index + 1];
-            start = parseInt(nextKey);
-
-        }
-
         const destinations = this.adjecencyList.get(start);
+        //list of destinations from current node
         for (let destination of destinations) {
-            if (destination === desired_destination) {
 
-                console.log("Found destination: ", destination);
-                console.log("Visited: ", [...visited]);
-                return;
-            }
             if (!visited.has(destination)) {
-                this.dfsModified(destination, desired_destination, visited, nodeVisitCount);
+                console.log("Destination: ", destination);
+                let p = this.dfsModified(destination, desired_destination, visited, [...path, start]);
+                if (p) {
+                    return p;
+                }
             }
 
         }
@@ -144,6 +141,10 @@ export class Graph {
 
     }
 
+    public findPath() {
+
+    }
+
     public findPaths(departure: number, destination: number) {
         const nodeCount: number = this.getNodeCount();
 
@@ -152,6 +153,7 @@ export class Graph {
         let pathList: Array<number> = [];
         // console.log("iteration: ", i);
         pathList.push(departure);
+
 
 
         this.printAllPathsUntil(departure, destination, isVisited, pathList);
@@ -177,39 +179,46 @@ export class Graph {
         if (departure == (destination)) {
 
 
-            this.paths.push([...localPathList]);
-            console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", localPathList);
+            if (localPathList.length < 6) {
 
-            //console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", result)
+                this.paths.push([...localPathList]);
+                console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", localPathList.length);
+
+            } else {
+                this.tries++; //increment the tries count
+                //console.log("too long route found: ", localPathList.length);
+            }
+
             isVisited[departure] = false;
+            //console.log("🚀 ~ file: Graph.ts:137 ~ Graph ~ printAllPathsUntil ~ Route found: ", result)
             //console.log("Route found: ", result, "Route length: ", result.length);
             return;
 
         }
 
 
+        if (this.tries < 10000) {
+            for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
 
-        for (let i = 0; i < this.adjecencyList.get(departure).length; i++) {
+                if (!isVisited[this.adjecencyList.get(departure)[i]]) {
 
-            if (!isVisited[i]) {
+                    //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
 
-                //if (_.isEmpty(result) && this.tries <= this.getNodeCount()) {
+                    localPathList.push(this.adjecencyList.get(departure)[i]);
+                    this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList);
+                    localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
+
+                    // } else {
+                    //     break;
+                    // }
 
 
-                localPathList.push(this.adjecencyList.get(departure)[i]);
-                this.printAllPathsUntil(this.adjecencyList.get(departure)[i], destination, isVisited, localPathList);
-                localPathList.splice(localPathList.indexOf(this.adjecencyList.get(departure)[i]), 1);
-
-                // } else {
-                //     break;
-                // }
-
+                }
 
             }
-
+            isVisited[departure] = false;
         }
 
-        isVisited[departure] = false;
 
     }
     public getCycle(G, n, path) {

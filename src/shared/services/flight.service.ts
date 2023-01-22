@@ -14,7 +14,7 @@ import { Tools } from 'src/classes/Tools';
 
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
-import { connected } from 'process';
+let path = require('ngraph.path');
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
@@ -109,7 +109,7 @@ export class FlightService implements ServiceInterface<Flight> {
 
         const maxConnectedFlightLength = 6; //TODO add it an api param
 
-        const graph: Graph = await this.airportService.createAirportsGraph();
+        const graph = await this.airportService.createAirportsGraph();
 
         //first check if direct flight is available
         let directFlight: Flight[] = await this.getDirectFlight(id_departure, id_destination);
@@ -118,23 +118,18 @@ export class FlightService implements ServiceInterface<Flight> {
             return directFlight;
         }
 
-        // let connectedAirports: number[] = _.remove(graph.getSearchResult(), (id: number) => {
-        //     return id !== id_departure;
-        // });
-        // console.log(connectedAirports.length, graph.getNodeCount());
-        //return connectedAirports;
-        // //return connectedAirports;
-        // if (_.isEmpty(connectedAirports) === true) {
-        //     return [];
-        // }
+        let pathFinder = path.aStar(graph);
+        let pathFound = pathFinder.find(id_departure, id_destination);
+        let possiblePaths = _.reverse(pathFound.map(e => {
+            return e.id;
+        }));
 
-        //find all flights that connect both airports 
-        //do that for less than 10 seconds 
-        graph.findPaths(id_departure, id_destination);
-
-        let possiblePaths: number[][] = graph.getPaths();
+        //console.log(pathFound, possiblePaths);
+        //return possiblePaths;
 
 
+
+        //let possiblePaths: number[][] = graph.getPaths();
 
         //if path contains more than defined connected flights, remove it
         // possiblePaths = _.remove(possiblePaths, (path: number[]) => {
@@ -143,19 +138,19 @@ export class FlightService implements ServiceInterface<Flight> {
 
         let possibleFlights: Array<Array<Flight[]>> = [];
 
-        //assign possbile flights for every step of the path 
-        for (let path of possiblePaths) {
-            let flight: Array<Flight[]> = [];
-            for (let i = 0; i < path.length - 1; i++) {
-                let flights: Flight[] = await this.getDirectFlight(path[i], path[i + 1]);
+        // //assign possbile flights for every step of the path 
 
-                flight.push(flights)
+        let flight: Array<Flight[]> = [];
+        for (let i = 0; i < possiblePaths.length - 1; i++) {
+            let flights: Flight[] = await this.getDirectFlight(possiblePaths[i], possiblePaths[i + 1]);
 
-            }
+            flight.push(flights)
 
-            possibleFlights.push(flight);
-            //console.log(flights);
         }
+
+        possibleFlights.push(flight);
+        //console.log(flights);
+
 
         return possibleFlights;
 

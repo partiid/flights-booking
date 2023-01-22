@@ -90,7 +90,7 @@ const calculteDistanceBetweenAirports = (lat1, lon1, lat2, lon2, unit = "K") => 
 
 const seedFlights = async () => {
     const generator = new DataGenerator();
-    const numOfFlights = 500;
+    const numOfFlights = 5500;
 
     await prisma.airport.findMany().then(async (airports) => {
 

@@ -2,9 +2,11 @@ import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { ServiceInterface } from 'src/interfaces/service.interface';
 import { Airport, Prisma } from "@prisma/client";
 import { PrismaService } from 'src/prisma.service';
-import { Graph } from 'src/classes/Graph';
+//import { Graph } from 'src/classes/Graph';
 import { flightRoute } from 'src/interfaces/flight/flightRoute.interface';
 import { FlightService } from './flight.service';
+
+//var Graph = require('@dagrejs/graphlib').Graph;
 
 
 @Injectable()
@@ -70,9 +72,10 @@ export class AirportService implements ServiceInterface<Airport>{
         return true;
     }
 
-    async createAirportsGraph(): Promise<Graph> {
+    async createAirportsGraph() {
         let airports: Airport[] = await this.findAll();
-        let graph = new Graph();
+        let createGraph = require('ngraph.graph');
+        let graph = createGraph();
         airports.forEach(airport => {
             if (!graph.hasNode(airport.id_airport)) {
                 graph.addNode(airport.id_airport);
@@ -81,7 +84,7 @@ export class AirportService implements ServiceInterface<Airport>{
         })
         let flightRoutes: flightRoute[] = await this.flightService.getFlightsRoutes();
         flightRoutes.forEach((route: flightRoute) => {
-            graph.addEdge(route.departure.id, route.destination.id);
+            graph.addLink(route.departure.id, route.destination.id);
         });
 
         return graph;
