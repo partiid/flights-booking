@@ -106,9 +106,16 @@ export class FlightService implements ServiceInterface<Flight> {
 
     }
     async delete(where: Prisma.FlightWhereUniqueInput): Promise<Flight> {
-        return this.prisma.flight.delete({
-            where,
-        });
+        try {
+            console.log("deleting flight");
+            return await this.prisma.flight.delete({
+                where,
+            });
+        } catch (err) {
+            this.Logger.error("Error deleting a flight - probably does not exist");
+            throw new Error("Error deleting a flight");
+        }
+
     }
 
     async getFlightsRoutes(): Promise<flightRoute[]> {
@@ -177,18 +184,6 @@ export class FlightService implements ServiceInterface<Flight> {
             return e.id;
         }));
 
-        //console.log(pathFound, possiblePaths);
-        //return possiblePaths;
-
-
-
-        //let possiblePaths: number[][] = graph.getPaths();
-
-        //if path contains more than defined connected flights, remove it
-        // possiblePaths = _.remove(possiblePaths, (path: number[]) => {
-        //     return path.length <= maxConnectedFlightLength;
-        // });
-
         let possibleFlights: Array<Array<Flight[]>> = [];
 
         // //assign possbile flights for every step of the path 
@@ -206,9 +201,6 @@ export class FlightService implements ServiceInterface<Flight> {
 
 
         return possibleFlights;
-
-
-
 
 
     }

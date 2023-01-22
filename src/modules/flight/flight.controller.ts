@@ -1,12 +1,12 @@
 import {
     Controller, Get, UseInterceptors, CacheInterceptor, Param,
     ParseIntPipe, NotAcceptableException, Logger, Post, UseFilters, HttpCode, HttpStatus, UseGuards,
-    CACHE_MANAGER
+    NotFoundException, Delete, Body
 } from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
-import { Body } from '@nestjs/common/decorators';
+
 import { FlightModel } from './flight.model';
 
 
@@ -68,8 +68,17 @@ export class FlightController {
             throw new NotAcceptableException(error);
         }
     }
+    @UseGuards(AuthenticatedGuard)
+    @Delete('/flight/:id_flight')
+    @ApiCookieAuth()
+    async deleteFlight(@Param('id_flight', ParseIntPipe) id_flight: number) {
+        try {
+            await this.flightService.delete({ id_flight: id_flight });
+        } catch (error) {
+            throw new NotFoundException(error);
+        }
 
-
+    }
     //@UseGuards(AuthenticatedGuard)
 
 

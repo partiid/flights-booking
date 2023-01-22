@@ -109,9 +109,15 @@ export class BookingService implements ServiceInterface<Booking>{
         });
     }
     async delete(where: Prisma.BookingWhereUniqueInput): Promise<Booking> {
-        return this.prismaService.booking.delete({
-            where,
-        });
+        try {
+            return this.prismaService.booking.delete({
+                where,
+            });
+        } catch (err) {
+            this.Logger.error("Error deleting booking");
+            throw new Error("Error deleting booking");
+        }
+
     }
 
 

@@ -1,9 +1,10 @@
-import { Controller, HttpCode, Post, HttpStatus, Body, Get, UseGuards, NotAcceptableException } from '@nestjs/common';
+import { Controller, HttpCode, Post, HttpStatus, NotFoundException, Body, Get, UseGuards, BadRequestException, Param, ParseIntPipe } from '@nestjs/common';
 import { BookingModel } from './booking.model';
 import { BookingService } from './booking.service';
 import { Booking } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
+import { Delete } from '@nestjs/common/decorators';
 @ApiTags('booking')
 @Controller('booking')
 export class BookingController {
@@ -15,20 +16,33 @@ export class BookingController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() booking: BookingModel): Promise<Booking | Error> {
 
-    //throw new Error("Not implemented yet");
+
     try {
       return await this.bookingService.create(booking);
 
-    } catch (e) {
+    } catch (err) {
 
-      throw new NotAcceptableException("Error occured while creating booking");
+      throw new BadRequestException(err);
     }
   }
 
   @UseGuards(AuthenticatedGuard)
-  @Get()
-  async getBookings() {
+  @ApiCookieAuth()
+  @Get('/all')
+  async getBookings(): Promise<Booking[]> {
     return await this.bookingService.findAll();
+  }
+
+  @ApiCookieAuth()
+  @UseGuards(AuthenticatedGuard)
+  @Delete('/booking/:id_booking')
+  async deleteBooking(@Param('id_booking', ParseIntPipe) id_booking: number) {
+    try {
+      return await this.bookingService.delete({ id_booking: id_booking });
+
+    } catch (err) {
+      throw new NotFoundException(err);
+    }
   }
 
 }

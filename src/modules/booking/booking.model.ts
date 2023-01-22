@@ -16,6 +16,7 @@ export class BookingModel {
 
     @IsNotEmpty()
     @ApiProperty()
+
     seats?: string[];
 
 
