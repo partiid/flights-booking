@@ -1,15 +1,15 @@
-import { IsString, IsEmpty } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Employee {
     @ApiProperty()
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     login: string;
 
     @ApiProperty()
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     password: string;
 }
 export class EmployeeModel extends Employee { }

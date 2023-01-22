@@ -10,10 +10,11 @@ import { BookingService } from 'src/modules/booking/booking.service';
 import { Aircraft } from '@prisma/client';
 import * as _ from 'lodash';
 import 'lodash.combinations';
-import { Tools } from 'src/classes/Tools';
+const moment = require('moment');
 
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
+import { FlightModel } from 'src/modules/flight/flight.model';
 let path = require('ngraph.path');
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
@@ -23,6 +24,7 @@ export class FlightService implements ServiceInterface<Flight> {
         @Inject(forwardRef(() => AirportService)) private readonly airportService: AirportService,
         private readonly prisma: PrismaService,
         @Inject(forwardRef(() => BookingService)) private readonly bookingService: BookingService,
+
     ) { }
 
     async findAll() {
@@ -43,9 +45,39 @@ export class FlightService implements ServiceInterface<Flight> {
         });
     }
 
-    async create(data: Prisma.FlightCreateInput): Promise<Flight> {
+    async create(data: FlightModel): Promise<Flight> {
+        //get the airports to calculate the distance between them
+        let { id_departure, id_destination, date_departure, number: flightNumber } = data;
+        let departureAirport: Airport = await this.airportService.findOne({ id_airport: id_departure });
+        let destinationAirport: Airport = await this.airportService.findOne({ id_airport: id_destination });
+
+        let { geo_lat, geo_long } = departureAirport;
+        let { geo_lat: geo_lat2, geo_long: geo_long2 } = destinationAirport;
+
+        const flightDistance: number = this.airportService.calculteDistanceBetweenAirports(geo_lat, geo_long, geo_lat2, geo_long2);
+        let flightDuration: number = await this.prisma.aircraft.findUnique({ where: { id_aircraft: data.id_aircraft } }).then((aircraft: Aircraft) => {
+            return flightDistance / aircraft.avg_speed;
+        });;
+
+        //get flight date arrival to destination airport 
+        let date_arrival = moment(date_departure).add(flightDuration, 'hours').toDate();
+        data.date_arrival = date_arrival;
+
+
+
         return this.prisma.flight.create({
-            data,
+            data: {
+                number: flightNumber,
+                date_departure: date_departure,
+                date_arrival: data.date_arrival,
+                Aircraft: { connect: { id_aircraft: data.id_aircraft } },
+                airport_departure: { connect: { id_airport: data.id_departure } },
+                airport_destination: { connect: { id_airport: data.id_destination } },
+                distance: flightDistance,
+                duration: flightDuration,
+                price: data.price,
+
+            }
         });
     }
 

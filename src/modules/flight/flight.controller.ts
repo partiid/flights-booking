@@ -1,8 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, Logger } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Logger, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
+import { AuthenticatedGuard } from '../auth/authenticated.guard';
 import { IAppProps, App } from 'src/public/app.view';
 import { ApiTags } from '@nestjs/swagger';
 import { Render } from 'nest-jsx-template-engine';
+import { Flight } from '@prisma/client';
+import { Body } from '@nestjs/common/decorators';
+import { FlightModel } from './flight.model';
 
 @ApiTags('flights')
 @Controller('flights')
@@ -49,6 +53,13 @@ export class FlightController {
     @Get('/flight/seats/:id_flight')
     async getFlightSeats(@Param('id_flight', ParseIntPipe) id_flight: number) {
         return await this.flightService.getFlightFreeSeats(id_flight);
+    }
+
+    @UseGuards(AuthenticatedGuard)
+    @HttpCode(HttpStatus.CREATED)
+    @Post('/flight/create')
+    async createFlight(@Body() flightModel: FlightModel): Promise<Flight> {
+        return await this.flightService.create(flightModel);
     }
 
     // @Get('/from/:id_airport_from/to/:id_airport_to')
