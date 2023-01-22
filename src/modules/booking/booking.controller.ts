@@ -1,4 +1,4 @@
-import { Controller, HttpCode, Post, HttpStatus, Body, UseGuards, NotAcceptableException } from '@nestjs/common';
+import { Controller, HttpCode, Post, HttpStatus, Body, Get, UseGuards, NotAcceptableException } from '@nestjs/common';
 import { BookingModel } from './booking.model';
 import { BookingService } from './booking.service';
 import { Booking } from '@prisma/client';
@@ -25,5 +25,10 @@ export class BookingController {
     }
   }
 
+  @UseGuards(AuthenticatedGuard)
+  @Get()
+  async getBookings() {
+    return await this.bookingService.findAll();
+  }
 
 }

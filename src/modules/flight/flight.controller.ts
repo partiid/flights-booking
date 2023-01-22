@@ -1,4 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe, NotAcceptableException, Logger, Post, UseFilters, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+    Controller, Get, UseInterceptors, CacheInterceptor, Param,
+    ParseIntPipe, NotAcceptableException, Logger, Post, UseFilters, HttpCode, HttpStatus, UseGuards,
+    CACHE_MANAGER
+} from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
@@ -6,8 +10,10 @@ import { Body } from '@nestjs/common/decorators';
 import { FlightModel } from './flight.model';
 
 
+@UseInterceptors(CacheInterceptor)
 @ApiTags('flights')
 @Controller('flights')
+
 export class FlightController {
     private Logger: Logger = new Logger(FlightController.name);
     constructor(

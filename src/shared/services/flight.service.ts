@@ -1,22 +1,22 @@
-import { Injectable, Logger, Inject, forwardRef, HttpException } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { Airport, Flight, Prisma } from '@prisma/client';
 import { ServiceInterface } from '../../interfaces/service.interface';
 import { flightRoute } from '../../interfaces/flight/flightRoute.interface';
 import { AirportService } from './airport.service';
-import { Graph } from 'src/classes/Graph';
-import { Booking } from '@prisma/client';
 import { BookingService } from 'src/modules/booking/booking.service';
 import { Aircraft } from '@prisma/client';
 import * as _ from 'lodash';
 import 'lodash.combinations';
-const moment = require('moment');
-
-import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
 import { FlightModel } from 'src/modules/flight/flight.model';
 import { NotAcceptableException } from '@nestjs/common/exceptions';
+import { Graph } from 'redis';
+
+const moment = require('moment');
 let path = require('ngraph.path');
+
+
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
     private readonly Logger: Logger = new Logger(FlightService.name);
@@ -25,6 +25,7 @@ export class FlightService implements ServiceInterface<Flight> {
         @Inject(forwardRef(() => AirportService)) private readonly airportService: AirportService,
         private readonly prisma: PrismaService,
         @Inject(forwardRef(() => BookingService)) private readonly bookingService: BookingService,
+
 
     ) { }
 
@@ -153,8 +154,15 @@ export class FlightService implements ServiceInterface<Flight> {
     async findConnectedFlights(id_departure: number, id_destination: number) {
 
         const maxConnectedFlightLength = 6; //TODO add it an api param
+        let graph: Graph = await this.airportService.createAirportsGraph();
+        // if (await this.cache.get('airportsGraph') !== undefined) {
+        //     graph = await this.cache.get('airportsGraph');
+        // } else {
+        //     graph = ;
+        //     await this.cache.set('airportsGraph', graph, 3600);
 
-        const graph = await this.airportService.createAirportsGraph();
+        // }
+
 
         //first check if direct flight is available
         let directFlight: Flight[] = await this.getDirectFlight(id_departure, id_destination);
