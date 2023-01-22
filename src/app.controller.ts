@@ -5,14 +5,9 @@ import { ApiCookieAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { EmployeeModel } from './modules/employee/employee.model';
 import { LocalAuthGuard } from './modules/auth/localAuth.guard';
 import { AuthenticatedGuard } from './modules/auth/authenticated.guard';
+import { LoginModel } from './modules/auth/login.model';
 
 
-class loginDto {
-    @ApiProperty()
-    username: string;
-    @ApiProperty()
-    password: string;
-}
 @ApiCookieAuth()
 @Controller()
 export class AppController {
@@ -21,7 +16,7 @@ export class AppController {
     @ApiTags('auth')
     @UseGuards(LocalAuthGuard)
     @Post('/auth/login')
-    async login(@Body() dto: loginDto, @Request() req) {
+    async login(@Body() dto: LoginModel, @Request() req) {
         if (req.referer === process.env.SWAGGER_REFFERER) {
             return req.sessionID;
         } else {

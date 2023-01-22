@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApiResponseInterceptor } from './interceptors/apiResponse.interceptor';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './filters/httpException.filter';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import Redis from 'ioredis';
@@ -37,10 +38,12 @@ async function bootstrap() {
         );
         next();
     });
+    app.useGlobalFilters(new HttpExceptionFilter());
     //setup api response
-    app.useGlobalInterceptors(new ApiResponseInterceptor());
     //add validation via class validator
     app.useGlobalPipes(new ValidationPipe());
+
+    app.useGlobalInterceptors(new ApiResponseInterceptor());
     //setup swagger
     const config = new DocumentBuilder()
         .setTitle('Flights booking system')

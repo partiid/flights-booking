@@ -9,10 +9,15 @@ import { CustomerModule } from './modules/customer/customer.module';
 import { RenderMiddleware } from 'nest-jsx-template-engine';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { HttpExceptionFilter } from './filters/httpException.filter';
 @Module({
     imports: [FlightModule, AirportModule, CountryModule, CustomerModule, BookingModule, EmployeeModule, AuthModule],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService,
+        {
+            provide: 'APP_FILTER',
+            useClass: HttpExceptionFilter,
+        }],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

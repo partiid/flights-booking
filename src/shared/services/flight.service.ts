@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef, HttpException } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { Airport, Flight, Prisma } from '@prisma/client';
 import { ServiceInterface } from '../../interfaces/service.interface';
@@ -15,6 +15,7 @@ const moment = require('moment');
 import { connectedFlightRoute } from 'src/interfaces/flight/connectedFlightRoute.interface';
 import { AircraftSeating } from 'src/classes/AircraftSeating';
 import { FlightModel } from 'src/modules/flight/flight.model';
+import { NotAcceptableException } from '@nestjs/common/exceptions';
 let path = require('ngraph.path');
 @Injectable()
 export class FlightService implements ServiceInterface<Flight> {
@@ -63,22 +64,28 @@ export class FlightService implements ServiceInterface<Flight> {
         let date_arrival = moment(date_departure).add(flightDuration, 'hours').toDate();
         data.date_arrival = date_arrival;
 
+        let flight: Flight;
+        try {
+            return await this.prisma.flight.create({
+                data: {
+                    number: flightNumber,
+                    date_departure: date_departure,
+                    date_arrival: data.date_arrival,
+                    Aircraft: { connect: { id_aircraft: data.id_aircraft } },
+                    airport_departure: { connect: { id_airport: data.id_departure } },
+                    airport_destination: { connect: { id_airport: data.id_destination } },
+                    distance: flightDistance,
+                    duration: flightDuration,
+                    price: data.price,
 
+                }
+            });
+        } catch (err) {
+            this.Logger.error("Error creating a flight - probably a duplicate entry");
+            throw new Error('Error creating a flight');
 
-        return this.prisma.flight.create({
-            data: {
-                number: flightNumber,
-                date_departure: date_departure,
-                date_arrival: data.date_arrival,
-                Aircraft: { connect: { id_aircraft: data.id_aircraft } },
-                airport_departure: { connect: { id_airport: data.id_departure } },
-                airport_destination: { connect: { id_airport: data.id_destination } },
-                distance: flightDistance,
-                duration: flightDuration,
-                price: data.price,
+        }
 
-            }
-        });
     }
 
     async update(params: {
@@ -86,10 +93,16 @@ export class FlightService implements ServiceInterface<Flight> {
         data: Prisma.FlightUpdateInput;
     }): Promise<Flight> {
         const { where, data } = params;
-        return this.prisma.flight.update({
-            data,
-            where,
-        });
+        try {
+            return await this.prisma.flight.update({
+                data,
+                where,
+            });
+        } catch (err) {
+            this.Logger.error("Error updating a flight");
+            throw new Error('Error updating a flight');
+        }
+
     }
     async delete(where: Prisma.FlightWhereUniqueInput): Promise<Flight> {
         return this.prisma.flight.delete({
