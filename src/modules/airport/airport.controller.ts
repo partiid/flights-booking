@@ -1,11 +1,14 @@
 import { Render } from 'nest-jsx-template-engine';
-import { Controller, Get, Param, Logger, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, Logger, ParseIntPipe, CacheInterceptor } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IAppProps, App } from 'src/public/app.view';
 import { AirportService } from '../../shared/services/airport.service';
+import { UseInterceptors } from '@nestjs/common/decorators';
 
 @ApiTags('airports')
+@UseInterceptors(CacheInterceptor)
 @Controller('airports')
+
 export class AirportController {
     private readonly Logger = new Logger(AirportController.name);
 
