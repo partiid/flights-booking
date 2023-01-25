@@ -24,7 +24,8 @@ async function bootstrap() {
         resave: false,
         saveUninitialized: false,
         cookie: {
-            maxAge: 60000,
+            maxAge: 6 * 60 * 60 * 3600,
+
             secure: false, //set this to false for now, since we are not using https 
         }
     }));
