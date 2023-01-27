@@ -1,7 +1,7 @@
 import {
     Controller, Get, UseInterceptors, CacheInterceptor, Param,
     ParseIntPipe, NotAcceptableException, Logger, Post, UseFilters, HttpCode, HttpStatus, UseGuards,
-    NotFoundException, Delete, Body
+    NotFoundException, Delete, Body, CacheTTL
 } from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
@@ -54,6 +54,7 @@ export class FlightController {
     }
     //get empty seats for given flight 
     @Get('/flight/seats/:id_flight')
+    @CacheTTL(15)
     async getFlightSeats(@Param('id_flight', ParseIntPipe) id_flight: number) {
         return await this.flightService.getFlightFreeSeats(id_flight);
     }
@@ -71,6 +72,7 @@ export class FlightController {
     }
     @UseGuards(JwtAuthGuard)
     @Delete('/flight/:id_flight')
+    @CacheTTL(0)
     @ApiBearerAuth()
     async deleteFlight(@Param('id_flight', ParseIntPipe) id_flight: number) {
         try {

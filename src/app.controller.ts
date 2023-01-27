@@ -19,7 +19,7 @@ export class AppController {
     @ApiTags('auth')
     @UseGuards(LocalAuthGuard)
     @Post('/auth/login')
-    async login(@Request() req) {
+    async login(@Body() dto: LoginModel, @Request() req) {
         return this.authService.login(req.user);
         // if (req.referer === process.env.SWAGGER_REFFERER) {
         //     return req.sessionID;

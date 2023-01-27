@@ -46,6 +46,7 @@ export class AircraftSeating {
         let seatsTable = this.getSeatsTable(capacity);
         seatsArr.forEach(seat => {
             let seatIndex = this.convertSeatToIndex(seat, seatsTable);
+            console.log(seatIndex);
             seatsTable[seatIndex[0]][seatIndex[1]] = "X";
         });
         return seatsTable;
