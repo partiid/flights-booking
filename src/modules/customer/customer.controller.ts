@@ -4,7 +4,8 @@ import { Customer, Prisma } from '@prisma/client';
 import { CustomerModel } from './customer.model';
 import { UseGuards } from '@nestjs/common/decorators';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwtAuth.guard';
 
 @ApiTags("customer")
 @Controller('customer')
@@ -19,15 +20,15 @@ export class CustomerController {
     return this.customerService.createIfNotExists(customer);
   }
 
-  @UseGuards(AuthenticatedGuard)
-  @ApiCookieAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('/all')
   async getCustomers(): Promise<Customer[]> {
     return await this.customerService.findAll();
   }
 
-  @ApiCookieAuth()
-  @UseGuards(AuthenticatedGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('/:id_customer')
   async getCustomer(@Param('id_customer', ParseIntPipe) id_customer: number): Promise<Customer> {
     return await this.customerService.findOne({ id_customer: id_customer });

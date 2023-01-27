@@ -2,9 +2,10 @@ import { Controller, HttpCode, Post, HttpStatus, NotFoundException, Body, Get, U
 import { BookingModel } from './booking.model';
 import { BookingService } from './booking.service';
 import { Booking } from '@prisma/client';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
 import { Delete } from '@nestjs/common/decorators';
+import { JwtAuthGuard } from '../auth/jwtAuth.guard';
 @ApiTags('booking')
 @Controller('booking')
 export class BookingController {
@@ -26,15 +27,15 @@ export class BookingController {
     }
   }
 
-  @UseGuards(AuthenticatedGuard)
-  @ApiCookieAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('/all')
   async getBookings(): Promise<Booking[]> {
     return await this.bookingService.findAll();
   }
 
-  @ApiCookieAuth()
-  @UseGuards(AuthenticatedGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Delete('/booking/:id_booking')
   async deleteBooking(@Param('id_booking', ParseIntPipe) id_booking: number) {
     try {

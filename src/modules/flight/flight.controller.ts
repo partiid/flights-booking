@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import { FlightService } from '../../shared/services/flight.service';
 import { AuthenticatedGuard } from '../auth/authenticated.guard';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
 import { FlightModel } from './flight.model';
+import { JwtAuthGuard } from '../auth/jwtAuth.guard';
 
 
 @UseInterceptors(CacheInterceptor)
@@ -57,9 +58,9 @@ export class FlightController {
         return await this.flightService.getFlightFreeSeats(id_flight);
     }
 
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('/flight')
-    @ApiCookieAuth()
+    @ApiBearerAuth()
     async createFlight(@Body() flightModel: FlightModel) {
 
         try {
@@ -68,9 +69,9 @@ export class FlightController {
             throw new NotAcceptableException(error);
         }
     }
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(JwtAuthGuard)
     @Delete('/flight/:id_flight')
-    @ApiCookieAuth()
+    @ApiBearerAuth()
     async deleteFlight(@Param('id_flight', ParseIntPipe) id_flight: number) {
         try {
             await this.flightService.delete({ id_flight: id_flight });

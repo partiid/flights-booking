@@ -50,7 +50,7 @@ async function bootstrap() {
         .setTitle('Flights booking system')
         .setDescription('Flights booking system')
         .setVersion('1.0')
-        .addCookieAuth()
+        .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);

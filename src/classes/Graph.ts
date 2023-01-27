@@ -92,9 +92,7 @@ export class Graph {
 
         visited.add(start);
         const destinations = this.adjecencyList.get(start);
-        if (destinations.includes(desired_destination)) {
-            this.searchResult.push(start);
-        }
+       
 
         for (let destination of destinations) {
 
@@ -105,6 +103,7 @@ export class Graph {
                 return;
             }
             if (!visited.has(destination)) {
+                
                 this.dfs(destination, desired_destination, visited);
 
             }

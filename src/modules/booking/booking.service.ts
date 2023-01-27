@@ -110,7 +110,7 @@ export class BookingService implements ServiceInterface<Booking>{
     }
     async delete(where: Prisma.BookingWhereUniqueInput): Promise<Booking> {
         try {
-            return this.prismaService.booking.delete({
+            return await this.prismaService.booking.delete({
                 where,
             });
         } catch (err) {
