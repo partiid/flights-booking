@@ -10,7 +10,7 @@ import Redis from 'ioredis';
 
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, { cors: true });
+    const app = await NestFactory.create(AppModule, { cors: false });
 
 
     //setup redis session store
@@ -31,14 +31,14 @@ async function bootstrap() {
     }));
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header(
-            'Access-Control-Allow-Headers',
-            'Origin, X-Requested-With, Content-Type, Accept',
-        );
-        next();
-    });
+    // app.use((req, res, next) => {
+    //     res.header('Access-Control-Allow-Origin', '*');
+    //     res.header(
+    //         'Access-Control-Allow-Headers',
+    //         'Origin, X-Requested-With, Content-Type, Accept',
+    //     );
+    //     next();
+    // });
     app.useGlobalFilters(new HttpExceptionFilter());
     //setup api response
     //add validation via class validator
@@ -56,11 +56,11 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
 
     //use cors for all routes
-    app.enableCors({
-        origin: true,
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-        credentials: true,
-    });
+    // app.enableCors({
+    //     origin: true,
+    //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    //     credentials: true,
+    // });
     await app.listen(3000);
 }
 bootstrap();
